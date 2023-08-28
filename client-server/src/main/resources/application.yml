@@ -1,0 +1,36 @@
+server:
+  port: 8081
+
+logging:
+  level:
+    root: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          realestates-client-oidc:
+            provider: spring
+            client-id: realestates-client
+            client-secret: secret
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://client-server:8081/login/oauth2/code/{registrationId}"
+            scope: openid
+            client-name: realestates-client-oidc
+          realestates-client-authorization-code:
+            provider: spring
+            client-id: realestates-client
+            client-secret: secret
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://client-server:8081/authorized"
+            scope: realestates.user
+            client-name: realestates-client-authorization-code
+        provider:
+          spring:
+            issuer-uri: http://auth-server:9000
+resource-server:
+  url: http://resource-server:8090

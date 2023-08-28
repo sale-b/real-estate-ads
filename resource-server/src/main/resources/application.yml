@@ -1,0 +1,33 @@
+server:
+  port: 8090
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    p6spy: debug
+    com:
+      p6spy: debug
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://auth-server:9000
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:p6spy:postgresql://localhost:5432/real_estate_backend
+    username: postgres
+    password: password
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    hibernate:
+      ddl-auto: validate
+  sql:
+    init:
+      platform: postgres
+baseUrl: http://resource-server:8090

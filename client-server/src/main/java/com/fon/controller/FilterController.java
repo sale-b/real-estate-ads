@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,30 +26,33 @@ public class FilterController {
     private String resourceServerUrl;
 
     @PostMapping()
-    public ResponseEntity<?> save(@RequestBody Map requestMap, HttpServletRequest request) {
+    public ResponseEntity<?> save(@RegisteredOAuth2AuthorizedClient("realestates-client-authorization-code") OAuth2AuthorizedClient authorizedClient, @RequestBody Map requestMap, HttpServletRequest request) {
         return requestService.performRequest(
                 ResourceRequest.builder()
                         .httpMethod(HttpMethod.POST)
                         .body(requestMap)
                         .uri(String.format("%s%s", resourceServerUrl, request.getServletPath()))
+                        .authorizedClient(authorizedClient)
                         .build());
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<?> findByUserId(HttpServletRequest request) {
+    public ResponseEntity<?> findByUserId(@RegisteredOAuth2AuthorizedClient("realestates-client-authorization-code") OAuth2AuthorizedClient authorizedClient, HttpServletRequest request) {
         return requestService.performRequest(
                 ResourceRequest.builder()
                         .httpMethod(HttpMethod.GET)
                         .uri(String.format("%s%s", resourceServerUrl, request.getServletPath()))
+                        .authorizedClient(authorizedClient)
                         .build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteById(HttpServletRequest request) {
+    public ResponseEntity deleteById(@RegisteredOAuth2AuthorizedClient("realestates-client-authorization-code") OAuth2AuthorizedClient authorizedClient, HttpServletRequest request) {
         return requestService.performRequest(
                 ResourceRequest.builder()
                         .httpMethod(HttpMethod.DELETE)
                         .uri(String.format("%s%s", resourceServerUrl, request.getServletPath()))
+                        .authorizedClient(authorizedClient)
                         .build());
     }
 

@@ -274,8 +274,7 @@ export default {
   }
   ,
   methods: {
-    ...
-        mapActions(["setId"]),
+    ...mapActions(["setId", "removeId"]),
     notifyVue(verticalAlign, horizontalAlign, message) {
       this.$notify({
         message: message,
@@ -321,9 +320,9 @@ export default {
 
       if (!error) {
         axios
-            .post(`${this.apiUrl}/api/v1/real-estate`, formData)
+            .put(`${this.apiUrl}/api/v1/real-estate`, formData)
             .then((res) => {
-              this.$router.push({name: 'Ad Details', params: {id: res.data.id}});
+                this.$router.push({name: 'Ad Details', params: {id: res.data.id}});
               // this.setAuthToken(res.headers["x-auth-token"]);
               // this.setId(res.data.id);
               //
@@ -332,7 +331,9 @@ export default {
               // this.emailadress = null;
               // this.password = null;
               // this.confirmPassword = null;
-              this.notifyVue("top", "center", error.response.data.message);
+              this.notifyVue("top", "center", "Not authorized, redirecting to login...");
+              this.removeId();
+              window.location.href = "http://client-server:8081/auth/login";
             });
       }
     }

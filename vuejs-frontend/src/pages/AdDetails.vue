@@ -125,7 +125,7 @@
             {{ ad.description }}
             <br />
             <md-button style="float:right;" v-if="ad.userId === parseInt(userId)" class="md-round md-success" @click="goToEditPage">Izmeni oglas</md-button>
-            <dialog-delete-ad :ad="ad"></dialog-delete-ad>
+            <dialog-delete-ad v-if="ad.userId === parseInt(userId)" :ad="ad"></dialog-delete-ad>
           </md-card-content>
         </md-card>
 

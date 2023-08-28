@@ -30,7 +30,7 @@ public class HttpRequestService {
     private WebClient.RequestHeadersSpec<?> prepareRequest(ResourceRequest request) {
         WebClient.RequestBodySpec requestSpec = webClient.method(request.getHttpMethod()).uri(request.getUri());
 
-        if (request.getHttpMethod() == HttpMethod.POST || request.getHttpMethod() == HttpMethod.PUT) {
+        if ((request.getHttpMethod() == HttpMethod.POST || request.getHttpMethod() == HttpMethod.PUT) && request.getBody() != null) {
             requestSpec.bodyValue(request.getBody());
         }
 

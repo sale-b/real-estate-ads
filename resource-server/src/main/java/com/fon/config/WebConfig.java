@@ -40,9 +40,11 @@ public class WebConfig implements WebMvcConfigurer {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().mvcMatcher("/**")
                 .authorizeRequests()
-                .mvcMatchers("/api/v1/user/**", "/api/v1/notification/**")
+                .mvcMatchers("/api/v1/user/**", "/api/v1/notification/**", "/api/v1/filter/**")
                 .access("hasAuthority('SCOPE_realestates.user')")
                 .mvcMatchers(HttpMethod.DELETE, "/api/v1/real-estate/**")
+                .access("hasAuthority('SCOPE_realestates.user')")
+                .mvcMatchers(HttpMethod.PUT, "/api/v1/real-estate/**")
                 .access("hasAuthority('SCOPE_realestates.user')")
                 .and()
                 .oauth2ResourceServer()

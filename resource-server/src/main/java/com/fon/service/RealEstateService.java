@@ -7,7 +7,6 @@ import com.fon.entity.*;
 import com.fon.entity.enumeration.*;
 import com.fon.mapper.RealEstateCreateRequestMapper;
 import com.fon.mapper.RealEstateDetailsMapper;
-import com.fon.mapper.UserMapper;
 import com.fon.util.EnumUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,18 +78,27 @@ public class RealEstateService {
         return realEstateRepository.save(realEstate);
     }
 
-    public RealEstate save(String request, List<MultipartFile> fileList) throws IOException {
+    public RealEstate save(String request, List<MultipartFile> fileList, String userEmail) throws IOException {
         List<String> fileNames = new ArrayList<>();
 
-        //TODO simulate principal user is 1
-
-        UserDto principal = userService.findById(1L);
-        User user = UserMapper.INSTANCE.toUser(principal);
         try {
             RealEstateCreateRequestDto realEstateDto = objectMapper.readValue(request, RealEstateCreateRequestDto.class);
 
             RealEstate realEstate = RealEstateCreateRequestMapper.INSTANCE.toRealEstate(realEstateDto);
-            realEstate.setUser(user);
+
+            if (realEstate.getId() != null) {
+                Optional<RealEstate> oldRealEstate = realEstateRepository.findById(realEstate.getId());
+                if (oldRealEstate.isPresent()) {
+                    if (!oldRealEstate.get().getUser().getEmail().equals(userEmail)) {
+                        throw new RuntimeException("Not authorized user!");
+                    } else {
+                        realEstate.setUser(oldRealEstate.get().getUser());
+                    }
+                }
+            } else {
+                realEstate.setUser(userService.findByEmail(userEmail).get());
+            }
+
             realEstate.setLocation(citySubregionService.findById(realEstateDto.getLocation()).get());
 
             // Handle the image file
@@ -221,7 +229,7 @@ public class RealEstateService {
 
     public Page<RealEstateDetailsDto> getRealEstates(PageRequestDto pageRequestDto) {
         Specification<RealEstate> spec = (root, query, criteriaBuilder) -> {
-            if(pageRequestDto.getFilters() != null) {
+            if (pageRequestDto.getFilters() != null) {
                 List<Predicate> predicates = buildCriteria(pageRequestDto, root, criteriaBuilder);
                 return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
             } else {
@@ -242,7 +250,8 @@ public class RealEstateService {
         return pageDto;
     }
 
-    private List<Predicate> buildCriteria(PageRequestDto pageRequestDto, Root<RealEstate> root, CriteriaBuilder criteriaBuilder) {
+    private List<Predicate> buildCriteria(PageRequestDto pageRequestDto, Root<RealEstate> root, CriteriaBuilder
+            criteriaBuilder) {
         List<Predicate> predicates = new ArrayList<>();
 
         if (pageRequestDto.getFilters().getUserId() != null) {

@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient;
+
 @RestController
 @RequestMapping("/api/v1/real-estate")
 public class RealEstateController {
@@ -44,9 +46,9 @@ public class RealEstateController {
                         .build());
     }
 
-    @PostMapping()
+    @PutMapping()
     public ResponseEntity saveRealEstate(@ModelAttribute("model") String request,
-                                         @RequestParam(value = "images", required = false) List<MultipartFile> fileList) throws IOException {
+                                         @RequestParam(value = "images", required = false) List<MultipartFile> fileList, @RegisteredOAuth2AuthorizedClient("realestates-client-authorization-code") OAuth2AuthorizedClient authorizedClient) throws IOException {
 
         MultipartBodyBuilder builder = new MultipartBodyBuilder();
         builder.part("model", request);
@@ -56,10 +58,11 @@ public class RealEstateController {
             }
         }
 
-        WebClient.ResponseSpec fullResponse = webClient.post()
+        WebClient.ResponseSpec fullResponse = webClient.put()
                 .uri(resourceServerUrl + "/api/v1/real-estate")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(BodyInserters.fromMultipartData(builder.build()))
+                .attributes(oauth2AuthorizedClient(authorizedClient))
                 .retrieve();
         String jsonResponse = Objects.requireNonNull(fullResponse.bodyToMono(String.class).block());
         HttpStatus statusCode = fullResponse.toBodilessEntity().block().getStatusCode();

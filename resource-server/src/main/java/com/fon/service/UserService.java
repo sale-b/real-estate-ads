@@ -25,10 +25,14 @@ public class UserService {
                 });
     }
 
-    public UserDto findById(Long id) {
+    public UserDto findDtoById(Long id) {
         Optional<User> user = userRepository.findById(id);
         return UserMapper.INSTANCE.toUserDto(
                 user.orElseThrow(() -> new EntityNotFoundException(String.format("Entity with ID: %d not found.", id))));
+    }
+
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
     }
 
     public User saveUser(User user) {

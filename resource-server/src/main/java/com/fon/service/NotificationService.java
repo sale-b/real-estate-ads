@@ -1,9 +1,11 @@
 package com.fon.service;
 
+import com.fon.DAO.FilterRepository;
 import com.fon.DAO.NotificationRepository;
 import com.fon.dto.NotificationDto;
 import com.fon.dto.NotificationsRequestDto;
 import com.fon.entity.Notification;
+import com.fon.entity.User;
 import com.fon.mapper.NotificationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -17,10 +19,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,9 +32,17 @@ public class NotificationService {
     @Autowired
     SimpMessagingTemplate messagingTemplate;
 
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    FilterRepository filterRepository;
+
     private Set<Notification> sentNotifications = new HashSet<>();
 
-    public Page<NotificationDto> getNotifications(NotificationsRequestDto notificationsRequestDto) {
+    public Page<NotificationDto> getNotifications(NotificationsRequestDto notificationsRequestDto, String userEmail) {
+
+        authorize(filterRepository.findById(notificationsRequestDto.getFilters().getId()).get().getUser().getId(), userEmail);
 
         Specification<Notification> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = buildCriteria(notificationsRequestDto, root, criteriaBuilder);
@@ -69,15 +76,18 @@ public class NotificationService {
         return notificationRepository.countByFilterIdAndSeenFalse(filterId);
     }
 
-    public long countByUserIdAndSeenFalse(Long userId) {
+    public long countByUserIdAndSeenFalse(Long userId, String userEmail) {
+        authorize(userId, userEmail);
         return notificationRepository.countUnseenNotificationsByUserId(userId);
     }
 
-    public void markNotificationAsSeen(Long notificationId) {
+    public void markNotificationAsSeen(Long notificationId, String userEmail) {
+        authorize(notificationRepository.findById(notificationId).get().getFilter().getUser().getId(), userEmail);
         notificationRepository.markNotificationAsSeen(notificationId, LocalDateTime.now());
     }
 
-    public void markAllNotificationsAsSeenForFilter(Long filterId) {
+    public void markAllNotificationsAsSeenForFilter(Long filterId, String userEmail) {
+        authorize(filterRepository.findById(filterId).get().getUser().getId(), userEmail);
         notificationRepository.markAllNotificationsAsSeenForFilter(filterId, LocalDateTime.now());
     }
 
@@ -96,5 +106,10 @@ public class NotificationService {
         }
     }
 
-
+    private void authorize(Long userId, String userEmail) {
+        Optional<User> user = userService.findById(userId);
+        if (user.isPresent() && !user.get().getEmail().equals(userEmail)) {
+            throw new RuntimeException("Not authorized!");
+        }
+    }
 }

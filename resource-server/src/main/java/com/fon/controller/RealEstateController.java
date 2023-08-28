@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,11 +37,11 @@ public class RealEstateController {
         return ResponseEntity.status(HttpStatus.OK).body(realEstateService.getAutocompleteValues());
     }
 
-    @PostMapping()
+    @PutMapping()
     public ResponseEntity<RealEstate> saveRealEstate(@ModelAttribute("model") String request,
-                                                     @RequestParam(value = "images", required = false) List<MultipartFile> fileList) throws IOException {
+                                                     @RequestParam(value = "images", required = false) List<MultipartFile> fileList, Principal principal) throws IOException {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(realEstateService.save(request, fileList));
+        return ResponseEntity.status(HttpStatus.CREATED).body(realEstateService.save(request, fileList, principal.getName()));
     }
 
     @PostMapping("/page")

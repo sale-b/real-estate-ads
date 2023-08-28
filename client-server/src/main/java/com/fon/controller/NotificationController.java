@@ -28,7 +28,7 @@ public class NotificationController {
     public ResponseEntity<?> getNotifications(@RegisteredOAuth2AuthorizedClient("realestates-client-authorization-code") OAuth2AuthorizedClient authorizedClient, @RequestBody Map requestMap, HttpServletRequest request) {
         return requestService.performRequest(
                 ResourceRequest.builder()
-                        .httpMethod(HttpMethod.GET)
+                        .httpMethod(HttpMethod.POST)
                         .uri(String.format("%s%s", resourceServerUrl, request.getServletPath()))
                         .body(requestMap)
                         .authorizedClient(authorizedClient)
@@ -40,27 +40,26 @@ public class NotificationController {
         return requestService.performRequest(
                 ResourceRequest.builder()
                         .httpMethod(HttpMethod.GET)
+                        .uri(String.format("%s%s", resourceServerUrl, request.getServletPath()))
                         .authorizedClient(authorizedClient)
                         .build());
     }
 
     @PutMapping("/seen/{notificationId}")
-    public ResponseEntity<?> markNotificationAsSeen(@RegisteredOAuth2AuthorizedClient("realestates-client-authorization-code") OAuth2AuthorizedClient authorizedClient, @RequestBody Map requestMap, HttpServletRequest request) {
+    public ResponseEntity<?> markNotificationAsSeen(@RegisteredOAuth2AuthorizedClient("realestates-client-authorization-code") OAuth2AuthorizedClient authorizedClient, HttpServletRequest request) {
         return requestService.performRequest(
                 ResourceRequest.builder()
-                        .httpMethod(HttpMethod.GET)
+                        .httpMethod(HttpMethod.PUT)
                         .uri(String.format("%s%s", resourceServerUrl, request.getServletPath()))
-                        .body(requestMap)
                         .authorizedClient(authorizedClient)
                         .build());
     }
 
     @PutMapping("/seen/filter/{filterId}")
-    public ResponseEntity<?> markAllNotificationsAsSeenForFilter(@RegisteredOAuth2AuthorizedClient("realestates-client-authorization-code") OAuth2AuthorizedClient authorizedClient, @RequestBody Map requestMap, HttpServletRequest request) {
+    public ResponseEntity<?> markAllNotificationsAsSeenForFilter(@RegisteredOAuth2AuthorizedClient("realestates-client-authorization-code") OAuth2AuthorizedClient authorizedClient, HttpServletRequest request) {
         return requestService.performRequest(
                 ResourceRequest.builder()
-                        .httpMethod(HttpMethod.GET)
-                        .body(requestMap)
+                        .httpMethod(HttpMethod.PUT)
                         .uri(String.format("%s%s", resourceServerUrl, request.getServletPath()))
                         .authorizedClient(authorizedClient)
                         .build());

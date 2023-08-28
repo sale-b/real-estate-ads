@@ -68,8 +68,10 @@ export default {
       axios
           .get(`${this.apiUrl}/api/v1/notification/user/${this.userId}`)
           .then((res) => {
-            this.notificationsCount = res.data;
-          })
+            this.notificationsCount = res.data.count;
+          }).catch((error) => {
+        window.location.href = "http://client-server:8081/auth/login";
+      });
 
       // Connect to WebSocket
       const socket = new SockJS(`${this.apiUrl}/ws`); // Replace with your Spring Boot backend URL

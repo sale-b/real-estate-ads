@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -20,19 +21,19 @@ public class FilterController {
     FilterService filterService;
 
     @PostMapping()
-    public ResponseEntity<FilterDto> save(@RequestBody FilterDto filterDto) {
+    public ResponseEntity<FilterDto> save(@RequestBody FilterDto filterDto, Principal principal) {
         Filter filter = FilterMapper.INSTANCE.toFilter(filterDto);
-        return ResponseEntity.status(HttpStatus.OK).body(filterService.save(filter));
+        return ResponseEntity.status(HttpStatus.OK).body(filterService.save(filter, principal.getName()));
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<List<FilterDto>> findByUserId(@PathVariable Long userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(filterService.findByUserId(userId));
+    public ResponseEntity<List<FilterDto>> findByUserId(@PathVariable Long userId, Principal principal) {
+        return ResponseEntity.status(HttpStatus.OK).body(filterService.findByUserId(userId, principal.getName()));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteById(@PathVariable Long id) {
-        filterService.deleteById(id);
+    public ResponseEntity deleteById(@PathVariable Long id, Principal principal) {
+        filterService.deleteById(id, principal.getName());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 

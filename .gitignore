@@ -1,0 +1,10 @@
+# Project exclude paths
+/authorization-server/target/
+/client-server/src/main/resources/static/
+/client-server/target/
+/resource-server/target/
+/.idea/
+/vuejs-frontend/node_modules/
+/spy.log
+/vuejs-frontend/package-lock.json
+

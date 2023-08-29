@@ -41,7 +41,7 @@
 <script>
 import TopNavbar from "./TopNavbar.vue";
 import DashboardContent from "./Content.vue";
-import {mapGetters} from "vuex";
+import {mapGetters, mapActions} from "vuex";
 import FiltersForm from "@/pages/Filters/FiltersForm.vue";
 import EventBus from "./../../event-bus";
 import axios from "axios";
@@ -54,7 +54,7 @@ export default {
     DashboardContent,
     FiltersForm,
   },
-  computed: mapGetters(["userId", "apiUrl"]),
+  computed: mapGetters(["userId", "apiUrl", "websocketUrl"]),
   created() {
     EventBus.$on('notificationsCount', data => {
       this.notificationsCount = data;
@@ -62,28 +62,13 @@ export default {
     EventBus.$on('notificationsCountDecrees', () => {
       this.notificationsCount--;
     });
+    EventBus.$on('userLoggedIn', () => {
+      this.connectToSocket();
+    });
   },
   mounted() {
     if (this.userId) {
-      axios
-          .get(`${this.apiUrl}/api/v1/notification/user/${this.userId}`)
-          .then((res) => {
-            this.notificationsCount = res.data.count;
-          }).catch((error) => {
-        window.location.href = "http://client-server:8081/auth/login";
-      });
-
-      // Connect to WebSocket
-      const socket = new SockJS(`${this.apiUrl}/ws`); // Replace with your Spring Boot backend URL
-      const stompClient = Stomp.over(socket);
-
-      stompClient.connect({}, () => {
-        stompClient.subscribe(`/user/${this.userId}/queue/notifications`, () => {
-          this.notificationsCount++;
-          EventBus.$emit("newNotificationReceived");
-
-        });
-      });
+      this.connectToSocket();
     }
   },
   data() {
@@ -94,7 +79,32 @@ export default {
     };
   },
   methods: {
+    ...mapActions(["removeId"]),
+    connectToSocket(){
+      {
+        axios
+            .get(`${this.apiUrl}/api/v1/notification/user/${this.userId}`)
+            .then((res) => {
+              this.notificationsCount = res.data.count;
+            }).catch((error) => {
+          this.removeId();
+          window.location.href = "http://client-server:8081/auth/login";
+        });
+
+        // Connect to WebSocket
+        const socket = new SockJS(`${this.websocketUrl}/ws`); // Replace with your Spring Boot backend URL
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+          stompClient.subscribe(`/user/${this.userId}/queue/notifications`, () => {
+            this.notificationsCount++;
+            EventBus.$emit("newNotificationReceived");
+          });
+        });
+      }
+    },
     login() {
+      this.removeId();
       window.location.href = "http://client-server:8081/auth/login";
     },
     register() {

@@ -44,7 +44,7 @@
 import Pagination from "./../components/Pagination";
 import AdCard from "../components/Cards/AdCard.vue";
 import axios from "axios";
-import {mapGetters} from "vuex";
+import {mapGetters, mapActions} from "vuex";
 import EventBus from "./../event-bus";
 
 export default {
@@ -71,6 +71,7 @@ export default {
     EventBus.$emit("loadFilters", this.$route.query)
   },
   methods: {
+    ...mapActions(["removeId"]),
     bool(val) {
       if (val == true || val == "true") return true;
       return false;
@@ -157,6 +158,7 @@ export default {
           })
           .then((res) => {
             if(typeof res.data.content === 'undefined'){
+              this.removeId();
               window.location.href = "http://client-server:8081/auth/login";
             }
             this.ads = res.data.content;

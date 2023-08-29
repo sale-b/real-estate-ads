@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -31,11 +32,11 @@ public class CitySubregionController {
 
 
     @PostMapping()
-    public ResponseEntity<?> findByCityIdIn(@RequestBody Map requestMap, HttpServletRequest request) {
+    public ResponseEntity<?> findByCityIdIn(@RequestBody List<Map<String, Object>> requestData, HttpServletRequest request) {
         return requestService.performRequest(
                 ResourceRequest.builder()
                         .httpMethod(HttpMethod.POST)
-                        .body(requestMap)
+                        .body(requestData)
                         .uri(resourceServerUrl + request.getServletPath())
                         .build());
     }

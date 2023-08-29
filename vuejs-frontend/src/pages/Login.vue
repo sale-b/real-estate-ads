@@ -12,6 +12,7 @@
 <script>
 import {mapGetters, mapActions} from "vuex";
 import axios from "axios";
+import EventBus from "@/event-bus";
 
 export default {
   computed: mapGetters(["userId", "apiUrl"]),
@@ -26,6 +27,7 @@ export default {
           .then((res) => {
             if(res.data.id) {
               this.setId(res.data.id);
+              EventBus.$emit("userLoggedIn");
               this.$router.push("user");
             } else {
               throw new Error("Not valid user response!")

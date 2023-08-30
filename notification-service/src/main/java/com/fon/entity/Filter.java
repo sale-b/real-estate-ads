@@ -85,8 +85,8 @@ public class Filter extends BaseEntity {
     private Boolean subscribed;
 
     @JsonProperty("user")
-    private void getIdFromUserObject(Map<String, Long> user) {
-        userId = user.get("id");
+    private void getIdFromUserObject(Map<String, String> user) {
+        userId = Long.parseLong(user.get("id"));
     }
 
 }

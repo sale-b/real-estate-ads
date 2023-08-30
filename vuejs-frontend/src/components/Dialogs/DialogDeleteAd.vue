@@ -8,8 +8,8 @@
       </div>
 
       <md-dialog-actions>
-        <md-button class="md-info" @click="showHideDialog()">Cancel</md-button>
-        <md-button class="md-info" @click="deleteAd()">Delete</md-button>
+        <md-button class="md-info" @click="showHideDialog()">Otkaži</md-button>
+        <md-button class="md-info" @click="deleteAd()">Obiši</md-button>
       </md-dialog-actions>
     </md-dialog>
 

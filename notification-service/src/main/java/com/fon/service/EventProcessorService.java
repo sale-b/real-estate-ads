@@ -13,6 +13,8 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @EnableConfigurationProperties(DestinationProperties.class)
 @Slf4j
@@ -22,13 +24,19 @@ public class EventProcessorService {
     FilterRepository filterRepository;
     @Autowired
     RealEstateRepository realEstateRepository;
+    @Autowired
+    RealEstateService realEstateService;
 
     @JmsListener(destination = "${destination.events}")
-    @Transactional
     public void receiveSaveEvent(BaseEntity event) {
         if (event instanceof Filter) {
-            log.info("Got for save {}", event);
-            filterRepository.save((Filter) event);
+            Filter filter = (Filter) event;
+            log.info("Got for save {}", filter);
+            filterRepository.save(filter);
+            List<RealEstate> realEstateList = realEstateService.getRealEstates(filter);
+            for (RealEstate realEstate : realEstateList){
+                log.info("FOUND REALESTATE {}", realEstate);
+            }
         } else if (event instanceof RealEstate) {
             log.info("Got for save {}", event);
             realEstateRepository.save((RealEstate) event);

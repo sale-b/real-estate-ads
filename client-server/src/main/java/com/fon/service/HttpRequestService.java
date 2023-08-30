@@ -37,7 +37,7 @@ public class HttpRequestService {
         if (request.getAuthorizedClient() != null) {
             requestSpec.attributes(oauth2AuthorizedClient(request.getAuthorizedClient()));
         }
-        // Add more conditions for other HTTP methods if needed
+
         return requestSpec;
     }
 }

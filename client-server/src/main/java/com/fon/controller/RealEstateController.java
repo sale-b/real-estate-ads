@@ -47,7 +47,7 @@ public class RealEstateController {
     }
 
     @PutMapping()
-    public ResponseEntity saveRealEstate(@ModelAttribute("model") String request,
+    public ResponseEntity<?> saveRealEstate(@ModelAttribute("model") String request,
                                          @RequestParam(value = "images", required = false) List<MultipartFile> fileList, @RegisteredOAuth2AuthorizedClient("realestates-client-authorization-code") OAuth2AuthorizedClient authorizedClient) throws IOException {
 
         MultipartBodyBuilder builder = new MultipartBodyBuilder();
@@ -64,10 +64,10 @@ public class RealEstateController {
                 .body(BodyInserters.fromMultipartData(builder.build()))
                 .attributes(oauth2AuthorizedClient(authorizedClient))
                 .retrieve();
-        String jsonResponse = Objects.requireNonNull(fullResponse.bodyToMono(String.class).block());
-        HttpStatus statusCode = fullResponse.toBodilessEntity().block().getStatusCode();
 
-        return ResponseEntity.status(statusCode).body(jsonResponse);
+        ResponseEntity<String> response = Objects.requireNonNull(fullResponse.toEntity(String.class).block());
+
+        return response;
     }
 
     @PostMapping("/page")

@@ -25,13 +25,25 @@ public class EventProcessorService {
 
     @JmsListener(destination = "${destination.events}")
     @Transactional
-    public void receiveEvent(BaseEntity event) {
+    public void receiveSaveEvent(BaseEntity event) {
         if (event instanceof Filter) {
-            log.info("Got {}", event);
+            log.info("Got for save {}", event);
             filterRepository.save((Filter) event);
         } else if (event instanceof RealEstate) {
-            log.info("Got {}", event);
+            log.info("Got for save {}", event);
             realEstateRepository.save((RealEstate) event);
+        }
+    }
+
+    @JmsListener(destination = "${destination.removals}")
+    @Transactional
+    public void receiveDeleteEvent(BaseEntity event) throws Exception {
+        if (event instanceof Filter) {
+            log.info("Got to delete {}", event);
+            filterRepository.delete((Filter) event);
+        } else if (event instanceof RealEstate) {
+            log.info("Got to delete {}", event);
+            realEstateRepository.delete((RealEstate) event);
         }
     }
 

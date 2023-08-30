@@ -73,7 +73,7 @@ public class RealEstateService {
         CitySubregion citySubregion = citySubregionService.findById(realEstate.getLocation().getId()).get();
         realEstate.setLocation(citySubregion);
         realEstate = realEstateRepository.save(realEstate);
-        eventService.sendEvent(realEstate);
+        eventService.sendRealEstateEvent(realEstate);
         return realEstate;
     }
 
@@ -209,6 +209,7 @@ public class RealEstateService {
         if (realEstate.isPresent() && realEstate.get().getUser().getEmail().equals(userEmail)) {
             realEstateRepository.delete(realEstate.get());
             deleteImages(realEstate.get().getImages());
+            eventService.sendDeleteEvent(RealEstate.builder().id(id).build());
         } else {
             throw new RuntimeException(String.format("Entity with ID: %d not found, or user with email: %s has no right do delete it", id, userEmail));
         }

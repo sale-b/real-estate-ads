@@ -75,7 +75,7 @@ export default {
           this.subscribed = false;
           this.showDialog = false;
           this.$notify({
-            message: "Filter saved!",
+            message: "Filter je uspešno sačuvan!",
             icon: "done",
             horizontalAlign: "center",
             verticalAlign: "top",

@@ -30,7 +30,7 @@ public class FilterService {
     public FilterDto save(Filter filter, String userEmail) {
         authorize(filter.getUser().getId(), userEmail);
         filter = filterRepository.save(filter);
-        eventService.sendEvent(filter);
+        eventService.sendRealEstateEvent(filter);
         return filterMapper.toFilterDto(filter, notificationService);
     }
 
@@ -42,6 +42,7 @@ public class FilterService {
     public void deleteById(Long id, String userEmail) {
         authorize(filterRepository.findById(id).get().getUser().getId(), userEmail);
         filterRepository.deleteById(id);
+        eventService.sendDeleteEvent(Filter.builder().id(id).build());
     }
 
     private void authorize(Long userId, String userEmail) {

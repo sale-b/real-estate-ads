@@ -31,12 +31,10 @@ public class JmsConfig {
         converter.setObjectMapper(jmsObjectMapper());
         converter.setTargetType(MessageType.TEXT);
         converter.setTypeIdPropertyName("_type");
-
         converter.setTypeIdMappings(Map.ofEntries(
                 Map.entry("com.fon.entity.Filter", Filter.class),
                 Map.entry("com.fon.entity.RealEstate", RealEstate.class)
         ));
-
         return converter;
     }
 

@@ -16,9 +16,11 @@ public class EventService {
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    public void sendEvent(BaseEntity entity) {
-        jmsTemplate.convertAndSend("processing-event", entity);
+    public void sendRealEstateEvent(BaseEntity entity) {
+        jmsTemplate.convertAndSend("real-estate-events", entity);
     }
-
+    public void sendDeleteEvent(BaseEntity entity) {
+        jmsTemplate.convertAndSend("entity-removals", entity);
+    }
 
 }

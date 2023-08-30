@@ -11,6 +11,6 @@ import org.springframework.context.annotation.Configuration;
 public class DestinationProperties {
 
 	private String events;
-	private String notifications;
+	private String removals;
 
 }

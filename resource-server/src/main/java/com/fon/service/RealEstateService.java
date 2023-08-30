@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
 import java.io.File;
 import java.io.IOException;
@@ -56,9 +54,6 @@ public class RealEstateService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final static String DIRECTORY_PATH = "C:\\images";
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
 
     public RealEstateDetailsDto findById(Long id) {
         Optional<RealEstate> realEstate = realEstateRepository.findById(id);
@@ -77,8 +72,9 @@ public class RealEstateService {
         }
         CitySubregion citySubregion = citySubregionService.findById(realEstate.getLocation().getId()).get();
         realEstate.setLocation(citySubregion);
+        realEstate = realEstateRepository.save(realEstate);
         eventService.sendEvent(realEstate);
-        return realEstateRepository.save(realEstate);
+        return realEstate;
     }
 
     public RealEstate save(String request, List<MultipartFile> fileList, String userEmail) throws IOException {

@@ -87,6 +87,7 @@ export default {
             .then((res) => {
               this.notificationsCount = res.data.count;
             }).catch((error) => {
+              //todo clear cookie
           this.removeId();
           window.location.href = "http://client-server:8081/auth/login";
         });

@@ -12,6 +12,7 @@
         <module>authorization-server</module>
         <module>client-server</module>
         <module>resource-server</module>
+        <module>notification-service</module>
     </modules>
 
     <properties>

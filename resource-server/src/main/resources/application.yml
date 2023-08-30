@@ -32,4 +32,6 @@ spring:
     init:
       platform: postgres
       mode: always
+  activemq:
+    broker-url: tcp://localhost:61616
 baseUrl: http://resource-server:8090

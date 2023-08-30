@@ -47,6 +47,8 @@ public class RealEstateService {
     private ImageService imageService;
     @Autowired
     UserService userService;
+    @Autowired
+    EventService eventService;
 
     @Value("${baseUrl}")
     private String baseUrl;
@@ -75,6 +77,7 @@ public class RealEstateService {
         }
         CitySubregion citySubregion = citySubregionService.findById(realEstate.getLocation().getId()).get();
         realEstate.setLocation(citySubregion);
+        eventService.sendEvent(realEstate);
         return realEstateRepository.save(realEstate);
     }
 

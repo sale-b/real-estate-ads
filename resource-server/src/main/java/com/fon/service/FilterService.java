@@ -27,10 +27,14 @@ public class FilterService {
     @Autowired
     UserService userService;
 
+    @Autowired
+    EventService eventService;
+
     public FilterDto save(Filter filter, String userEmail) {
         try {
             authorize(filter.getUser().getId(), userEmail);
             filter = filterRepository.save(filter);
+            eventService.sendEvent(filter);
         } catch (InvalidDataAccessApiUsageException ex) {
             if (Objects.requireNonNull(ex.getMessage()).contains("com.fon.entity.Filter.user -> com.fon.entity.User")) {
                 throw new NoUserFoundForFilterSave(ex.getMessage(), ex, filter);

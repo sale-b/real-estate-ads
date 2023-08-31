@@ -31,6 +31,7 @@ public class FilterService {
     public FilterDto save(Filter filter, String userEmail) {
         authorize(filter.getUser().getId(), userEmail);
         filter = filterRepository.save(filter);
+        filter.getUser().setEmail(userEmail);
         eventService.sendRealEstateEvent(filter);
         return filterMapper.toFilterDto(filter, notificationService);
     }

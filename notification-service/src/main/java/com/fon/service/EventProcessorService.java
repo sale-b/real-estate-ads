@@ -28,6 +28,8 @@ public class EventProcessorService {
     RealEstateService realEstateService;
     @Autowired
     FilterService filterService;
+    @Autowired
+    EmailService emailService;
 
     @JmsListener(destination = "${destination.events}")
     public void receiveSaveEvent(BaseEntity event) {
@@ -37,6 +39,9 @@ public class EventProcessorService {
             filterRepository.save(filter);
             List<RealEstate> realEstateList = realEstateService.getRealEstates(filter);
             for (RealEstate realEstate : realEstateList){
+                if(filter.getSubscribed()) {
+                    emailService.sendEmail(realEstate.toString(), filter.getUserEmail());
+                }
                 log.info("FOUND REALESTATE {}", realEstate);
             }
         } else if (event instanceof RealEstate) {
@@ -45,6 +50,9 @@ public class EventProcessorService {
             realEstateRepository.save(realEstate);
             List<Filter> filters = filterService.getFilters(realEstate);
             for (Filter filter : filters){
+                if(filter.getSubscribed()) {
+                    emailService.sendEmail(realEstate.toString(), filter.getUserEmail());
+                }
                 log.info("FOUND FILTER {}", filter);
             }
         }

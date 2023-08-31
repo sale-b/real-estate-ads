@@ -25,3 +25,12 @@ spring:
 destination:
   events: real-estate-events
   removals: entity-removals
+email:
+  properties:
+    SMTP_PORT: '465'
+    EMAIL_SUBJECT: STAMBENI OGLASNIK - NOTIFIKACIJA
+    SMTP_SERVER: mail.brigital.rs
+    EMAIL_TO_CC: ''
+    PASSWORD: password
+    USERNAME: realestate@brigital.rs
+    EMAIL_FROM: realestate@brigital.rs

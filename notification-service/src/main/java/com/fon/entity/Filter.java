@@ -76,7 +76,7 @@ public class Filter extends BaseEntity {
     private Set<FurnitureType> furniture;
 
     @Column(nullable = false)
-    private Long userId;
+    private String userEmail;
 
     @Column(nullable = false)
     private Boolean hasPictures;
@@ -85,8 +85,8 @@ public class Filter extends BaseEntity {
     private Boolean subscribed;
 
     @JsonProperty("user")
-    private void getIdFromUserObject(Map<String, String> user) {
-        userId = Long.parseLong(user.get("id"));
+    private void getEmailFromUserObject(Map<String, String> user) {
+        this.userEmail = user.get("email");
     }
 
 }

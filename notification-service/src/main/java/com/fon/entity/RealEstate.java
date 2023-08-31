@@ -26,10 +26,6 @@ public class RealEstate extends BaseEntity {
 
     @NotNull
     @Column(nullable = false)
-    private Long userId;
-
-    @NotNull
-    @Column(nullable = false)
     private String title;
     @NotNull
     @Column(nullable = false)
@@ -83,9 +79,5 @@ public class RealEstate extends BaseEntity {
     @Column(nullable = false)
     private Boolean hasPictures;
 
-    @JsonProperty("user")
-    private void getIdFromUserObject(Map<String, String> user) {
-        userId = Long.parseLong(user.get("id"));
-    }
 
 }

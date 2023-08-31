@@ -26,11 +26,11 @@ public class Filter extends BaseEntity {
     @Column(name = "city_id")
     private Long location;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "city_id", referencedColumnName = "id", insertable = false, updatable = false)
     private City city;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @Column(length = 1000)
     private List<CitySubregion> microLocation;
 
@@ -41,35 +41,35 @@ public class Filter extends BaseEntity {
     private String roomsNumberLess;
     private String roomsNumberHigher;
 
-    @ElementCollection(targetClass = RealEstateType.class)
+    @ElementCollection(targetClass = RealEstateType.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "filter_real_estate_type", joinColumns = @JoinColumn(name = "filter_id"),
             indexes = {@Index(name = "filter_real_estate_type_index", columnList = "real_estate_type")})
     @Column(name = "real_estate_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private Set<RealEstateType> type;
 
-    @ElementCollection(targetClass = AdType.class)
+    @ElementCollection(targetClass = AdType.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "filter_ad_type", joinColumns = @JoinColumn(name = "filter_id"),
             indexes = {@Index(name = "filter_ad_type_index", columnList = "ad_type")})
     @Column(name = "ad_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private Set<AdType> adType;
 
-    @ElementCollection(targetClass = HeatingType.class)
+    @ElementCollection(targetClass = HeatingType.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "filter_heating_type", joinColumns = @JoinColumn(name = "filter_id"),
             indexes = {@Index(name = "filter_heating_type_index", columnList = "heating_type")})
     @Column(name = "heating_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private Set<HeatingType> heatingType;
 
-    @ElementCollection(targetClass = Floor.class)
+    @ElementCollection(targetClass = Floor.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "filter_floor", joinColumns = @JoinColumn(name = "filter_id"),
             indexes = {@Index(name = "filter_floor_index", columnList = "floor")})
     @Column(name = "floor", nullable = false)
     @Enumerated(EnumType.STRING)
     private Set<Floor> floor;
 
-    @ElementCollection(targetClass = FurnitureType.class)
+    @ElementCollection(targetClass = FurnitureType.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "filter_furniture_type", joinColumns = @JoinColumn(name = "filter_id"),
             indexes = {@Index(name = "filter_furniture_type_index", columnList = "furniture_type")})
     @Column(name = "furniture_type", nullable = false)

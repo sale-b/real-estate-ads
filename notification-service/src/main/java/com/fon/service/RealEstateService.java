@@ -29,6 +29,10 @@ public class RealEstateService {
 
         if (filter != null) {
 
+            predicates.add(criteriaBuilder.greaterThan(
+                    root.get("createdOn"), criteriaBuilder.literal(filter.getCreatedOn())
+            ));
+
             if (filter.getHasPictures() != null && filter.getHasPictures()) {
                 predicates.add(criteriaBuilder.equal(root.get("hasPictures"), true));
             }
@@ -101,8 +105,8 @@ public class RealEstateService {
         }
 
         criteriaQuery.select(root)
-                .where(predicates.toArray(new Predicate[0]))
-                .orderBy(criteriaBuilder.desc(root.get("id")));
+                .where(predicates.toArray(new Predicate[0]));
+//                .orderBy(criteriaBuilder.desc(root.get("id")));
 
         return entityManager.createQuery(criteriaQuery).getResultList();
 

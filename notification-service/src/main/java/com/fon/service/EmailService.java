@@ -58,7 +58,7 @@ public class EmailService {
 
             Transport.send(msg, msg.getAllRecipients());
 
-            log.info("Status slanja e-maila: uspesan; >> " + emailTo);
+            log.info("Email notifikacija uspesno poslata na: " + emailTo);
 
         } catch (MessagingException e) {
             log.error(e.getMessage(), e);

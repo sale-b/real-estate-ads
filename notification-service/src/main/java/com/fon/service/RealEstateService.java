@@ -1,8 +1,10 @@
 package com.fon.service;
 
+import com.fon.DAO.RealEstateRepository;
 import com.fon.entity.*;
 import com.fon.entity.enumeration.*;
 import com.fon.util.EnumUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,9 @@ public class RealEstateService {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private RealEstateRepository realEstateRepository;
 
     public List<RealEstate> getRealEstates(Filter filter) {
 
@@ -110,5 +115,13 @@ public class RealEstateService {
 
         return entityManager.createQuery(criteriaQuery).getResultList();
 
+    }
+
+    public RealEstate save(RealEstate realEstate) {
+        return realEstateRepository.save(realEstate);
+    }
+
+    public void delete(RealEstate realEstate) {
+        realEstateRepository.delete(realEstate);
     }
 }

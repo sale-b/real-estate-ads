@@ -1,7 +1,5 @@
 package com.fon.service;
 
-import com.fon.DAO.FilterRepository;
-import com.fon.DAO.RealEstateRepository;
 import com.fon.config.DestinationProperties;
 import com.fon.entity.BaseEntity;
 import com.fon.entity.Filter;
@@ -21,10 +19,6 @@ import java.util.List;
 public class EventProcessorService {
 
     @Autowired
-    FilterRepository filterRepository;
-    @Autowired
-    RealEstateRepository realEstateRepository;
-    @Autowired
     RealEstateService realEstateService;
     @Autowired
     FilterService filterService;
@@ -36,25 +30,13 @@ public class EventProcessorService {
         if (event instanceof Filter) {
             Filter filter = (Filter) event;
             log.info("Got for save {}", filter);
-            filterRepository.save(filter);
-            List<RealEstate> realEstateList = realEstateService.getRealEstates(filter);
-            for (RealEstate realEstate : realEstateList){
-                if(filter.getSubscribed()) {
-                    emailService.sendEmail(realEstate.toString(), filter.getUserEmail());
-                }
-                log.info("FOUND REALESTATE {}", realEstate);
-            }
+            filterService.save(filter);
+            sendNotifications(filter);
         } else if (event instanceof RealEstate) {
             RealEstate realEstate = (RealEstate) event;
             log.info("Got for save {}", realEstate);
-            realEstateRepository.save(realEstate);
-            List<Filter> filters = filterService.getFilters(realEstate);
-            for (Filter filter : filters){
-                if(filter.getSubscribed()) {
-                    emailService.sendEmail(realEstate.toString(), filter.getUserEmail());
-                }
-                log.info("FOUND FILTER {}", filter);
-            }
+            realEstateService.save(realEstate);
+            sendNotifications(realEstate);
         }
     }
 
@@ -63,11 +45,31 @@ public class EventProcessorService {
     public void receiveDeleteEvent(BaseEntity event) throws Exception {
         if (event instanceof Filter) {
             log.info("Got to delete {}", event);
-            filterRepository.delete((Filter) event);
+            filterService.delete((Filter) event);
         } else if (event instanceof RealEstate) {
             log.info("Got to delete {}", event);
-            realEstateRepository.delete((RealEstate) event);
+            realEstateService.delete((RealEstate) event);
         }
     }
 
+    private void sendNotifications(Filter filter) {
+        List<RealEstate> realEstateList = realEstateService.getRealEstates(filter);
+        for (RealEstate realEstate : realEstateList) {
+            log.info("FOUND REALESTATE {}", realEstate);
+            if (filter.getSubscribed()) {
+                emailService.sendEmail(realEstate.toString(), filter.getUserEmail());
+            }
+
+        }
+    }
+
+    private void sendNotifications(RealEstate realEstate) {
+        List<Filter> filters = filterService.getFilters(realEstate);
+        for (Filter filter : filters) {
+            log.info("FOUND FILTER {}", filter);
+            if (filter.getSubscribed()) {
+                emailService.sendEmail(realEstate.toString(), filter.getUserEmail());
+            }
+        }
+    }
 }

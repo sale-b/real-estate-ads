@@ -1,9 +1,11 @@
 package com.fon.service;
 
+import com.fon.DAO.FilterRepository;
 import com.fon.entity.CitySubregion;
 import com.fon.entity.Filter;
 import com.fon.entity.RealEstate;
 import com.fon.entity.enumeration.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,9 @@ public class FilterService {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private FilterRepository filterRepository;
 
     public List<Filter> getFilters(RealEstate realEstate) {
 
@@ -122,6 +127,13 @@ public class FilterService {
         criteriaQuery.select(rootFilter).where(predicates.toArray(new Predicate[0]));
 
         return entityManager.createQuery(criteriaQuery).getResultList();
+    }
 
+    public Filter save(Filter filter){
+        return filterRepository.save(filter);
+    }
+
+    public void delete(Filter filter) {
+        filterRepository.delete(filter);
     }
 }

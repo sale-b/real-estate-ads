@@ -1,5 +1,6 @@
 package com.fon.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fon.entity.converter.*;
 import com.fon.entity.enumeration.*;
 import lombok.*;
@@ -16,6 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @ToString
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "title"}))
 public class Filter extends BaseEntity {
     @Id

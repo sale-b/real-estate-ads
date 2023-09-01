@@ -3,6 +3,7 @@ package com.fon.service;
 import com.fon.config.DestinationProperties;
 import com.fon.entity.BaseEntity;
 import com.fon.entity.Filter;
+import com.fon.entity.Notification;
 import com.fon.entity.RealEstate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,22 +27,26 @@ public class EventProcessorService {
     @Autowired
     EmailService emailService;
 
-    @JmsListener(destination = "${destination.events}")
+    @Autowired
+    NotificationService notificationService;
+
+    @JmsListener(destination = "${destination.events}", containerFactory = "queueConnectionFactory")
     public void receiveSaveEvent(BaseEntity event) {
         if (event instanceof Filter) {
             Filter filter = (Filter) event;
             log.info("Got for save {}", filter);
-            filterService.save(filter);
-            sendNotifications(filter);
+            filter = filterService.save(filter);
+            sendNotification(filter);
         } else if (event instanceof RealEstate) {
             RealEstate realEstate = (RealEstate) event;
             log.info("Got for save {}", realEstate);
-            realEstateService.save(realEstate);
-            sendNotifications(realEstate);
+            realEstate.setCreatedOn(LocalDateTime.now());
+            realEstate = realEstateService.save(realEstate);
+            sendNotification(realEstate);
         }
     }
 
-    @JmsListener(destination = "${destination.removals}")
+    @JmsListener(destination = "${destination.removals}", containerFactory = "queueConnectionFactory")
     @Transactional
     public void receiveDeleteEvent(BaseEntity event) throws Exception {
         if (event instanceof Filter) {
@@ -52,24 +58,34 @@ public class EventProcessorService {
         }
     }
 
-    private void sendNotifications(Filter filter) {
+    private void sendNotification(Filter filter) {
+        log.info("FOUND FILTER {}", filter);
         List<RealEstate> realEstateList = realEstateService.getRealEstates(filter);
         for (RealEstate realEstate : realEstateList) {
-            log.info("FOUND REALESTATE {}", realEstate);
-            if (filter.getSubscribed()) {
-                emailService.sendEmail(realEstate.toString(), filter.getUserEmail());
-            }
-
+            sendNotification(filter, realEstate);
         }
     }
 
-    private void sendNotifications(RealEstate realEstate) {
+    private void sendNotification(RealEstate realEstate) {
+        log.info("FOUND REALESTATE {}", realEstate);
         List<Filter> filters = filterService.getFilters(realEstate);
         for (Filter filter : filters) {
-            log.info("FOUND FILTER {}", filter);
-            if (filter.getSubscribed()) {
-                emailService.sendEmail(realEstate.toString(), filter.getUserEmail());
-            }
+            sendNotification(filter, realEstate);
         }
+    }
+
+    private void sendNotification(Filter filter, RealEstate realEstate) {
+        if (filter.getSubscribed()) {
+            emailService.sendEmail(realEstate.toString(), filter.getUserEmail());
+        }
+        Notification notification = Notification.builder()
+                .filter(filter)
+                .filterId(filter.getId())
+                .realEstate(realEstate)
+                .seen(false)
+                .createdOn(LocalDateTime.now())
+                .build();
+        notification = notificationService.save(notification);
+        notificationService.sendNotification(notification);
     }
 }

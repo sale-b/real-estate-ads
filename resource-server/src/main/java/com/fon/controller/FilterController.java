@@ -28,7 +28,7 @@ public class FilterController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<List<FilterDto>> findByUserId(@PathVariable Long userId, Principal principal) {
-        return ResponseEntity.status(HttpStatus.OK).body(filterService.findByUserId(userId, principal.getName()));
+        return ResponseEntity.status(HttpStatus.OK).body(filterService.findByUserIdOrderByIdAsc(userId, principal.getName()));
     }
 
     @DeleteMapping("/{id}")

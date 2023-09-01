@@ -36,9 +36,9 @@ public class FilterService {
         return filterMapper.toFilterDto(filter, notificationService);
     }
 
-    public List<FilterDto> findByUserId(Long userId, String userEmail) {
+    public List<FilterDto> findByUserIdOrderByIdAsc(Long userId, String userEmail) {
         authorize(userId, userEmail);
-        return filterMapper.toListDto(filterRepository.findByUserId(userId), notificationService);
+        return filterMapper.toListDto(filterRepository.findByUserIdOrderByIdAsc(userId), notificationService);
     }
 
     public void deleteById(Long id, String userEmail) {

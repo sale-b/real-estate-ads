@@ -1,6 +1,7 @@
 package com.fon.entity;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -11,14 +12,19 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Builder
+@SuperBuilder
 public class Notification extends BaseEntity {
 
     @Id
-    @Column(name = "id", updatable = false)
+    @SequenceGenerator(name = "notification_id_seq",
+            sequenceName = "notification_id_seq",
+            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "notification_id_seq")
+    @Column(name = "id", updatable = false, insertable = false)
     private Long id;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "real_estate_id", nullable = false)
     private RealEstate realEstate;
 

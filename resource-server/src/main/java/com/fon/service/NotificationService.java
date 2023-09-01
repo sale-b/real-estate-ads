@@ -7,6 +7,7 @@ import com.fon.dto.NotificationsRequestDto;
 import com.fon.entity.Notification;
 import com.fon.entity.User;
 import com.fon.mapper.NotificationMapper;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -37,8 +38,6 @@ public class NotificationService {
 
     @Autowired
     FilterRepository filterRepository;
-
-    private Set<Notification> sentNotifications = new HashSet<>();
 
     public Page<NotificationDto> getNotifications(NotificationsRequestDto notificationsRequestDto, String userEmail) {
 
@@ -91,19 +90,8 @@ public class NotificationService {
         notificationRepository.markAllNotificationsAsSeenForFilter(filterId, LocalDateTime.now());
     }
 
-    @Scheduled(fixedRate = 1000) // Send every 5 seconds
-    public void sendNotificationToUser() {
-        List<Notification> notifications = notificationRepository.findBySeenFalse();
-        notifications.removeAll(sentNotifications);
-
-        if (notifications.size() > 0) {
-            for (Notification notification : notifications) {
-                String userId = String.valueOf(notification.getRealEstate().getUser().getId());
-                String message = "newNotificationReceived";
-                messagingTemplate.convertAndSendToUser(userId, "/queue/notifications", message);
-                sentNotifications.add(notification);
-            }
-        }
+    public Notification save(Notification notification) {
+        return notificationRepository.save(notification);
     }
 
     private void authorize(Long userId, String userEmail) {

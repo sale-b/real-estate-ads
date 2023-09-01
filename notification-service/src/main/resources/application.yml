@@ -23,8 +23,8 @@ spring:
     broker-url: tcp://localhost:61616
     acknowledge_mode: dups_ok
 destination:
-  events: real-estate-events
-  removals: entity-removals
+  events: real-estate-events.que
+  removals: entity-removals.que
 email:
   properties:
     SMTP_PORT: '465'

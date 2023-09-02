@@ -14,11 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Component
 public class DataLoader {
@@ -63,41 +63,50 @@ public class DataLoader {
 
     private List<CitySubregion> loadCitySubregionsFromCSV() {
         List<CitySubregion> cityRegions = new ArrayList<>();
-        Long id = null;
-        try (CSVParser parser = new CSVParser(new FileReader(Objects.requireNonNull(getClass().getResource("/db-csv/city-subregions-data.csv")).getPath()), CSVFormat.DEFAULT)) {
-            for (CSVRecord record : parser) {
-                id = Long.parseLong(record.get(0));
-                cityRegions.add(CitySubregion.builder()
-                        .id(Long.parseLong(record.get(0)))
-                        .name(record.get(1))
-                        .geoLocation(new GeoLocation(Double.parseDouble(record.get(2)), Double.parseDouble(record.get(3))))
-                        .zoom(Integer.parseInt(record.get(4)))
-                        .order(Long.parseLong(record.get(5)))
-                        .cityRegion(cityRegionRepository.findById(Long.parseLong(record.get(6))).get())
-                        .build());
+
+        try (InputStream inputStream = getClass().getResourceAsStream("/db-csv/city-subregions-data.csv")) {
+            if (inputStream != null) {
+                try (CSVParser parser = new CSVParser(new InputStreamReader(inputStream), CSVFormat.DEFAULT)) {
+                    for (CSVRecord record : parser) {
+                        cityRegions.add(CitySubregion.builder()
+                                .id(Long.parseLong(record.get(0)))
+                                .name(record.get(1))
+                                .geoLocation(new GeoLocation(Double.parseDouble(record.get(2)), Double.parseDouble(record.get(3))))
+                                .zoom(Integer.parseInt(record.get(4)))
+                                .order(Long.parseLong(record.get(5)))
+                                .cityRegion(cityRegionRepository.findById(Long.parseLong(record.get(6))).get())
+                                .build());
+                    }
+                }
+            } else {
+                // Handle the case where the resource doesn't exist
+                System.err.println("Resource not found: /db-csv/city-subregions-data.csv");
             }
         } catch (Exception e) {
-            System.out.println(id);
             e.printStackTrace();
         }
 
         return cityRegions;
     }
 
+
     private List<CityRegion> loadCityRegionsFromCSV() {
         List<CityRegion> cityRegions = new ArrayList<>();
 
-        try (CSVParser parser = new CSVParser(new FileReader(Objects.requireNonNull(getClass().getResource("/db-csv/city-regions-data.csv")).getPath()), CSVFormat.DEFAULT)) {
-            for (CSVRecord record : parser) {
-
-                cityRegions.add(CityRegion.builder()
-                        .id(Long.parseLong(record.get(0)))
-                        .name(record.get(1))
-                        .geoLocation(new GeoLocation(Double.parseDouble(record.get(2)), Double.parseDouble(record.get(3))))
-                        .zoom(Integer.parseInt(record.get(4)))
-                        .order(Long.parseLong(record.get(5)))
-                        .city(cityRepository.findById(Long.parseLong(record.get(6))).get())
-                        .build());
+        try (InputStream inputStream = getClass().getResourceAsStream("/db-csv/city-regions-data.csv")) {
+            if (inputStream != null) {
+                try (CSVParser parser = new CSVParser(new InputStreamReader(inputStream), CSVFormat.DEFAULT)) {
+                    for (CSVRecord record : parser) {
+                        cityRegions.add(CityRegion.builder()
+                                .id(Long.parseLong(record.get(0)))
+                                .name(record.get(1))
+                                .geoLocation(new GeoLocation(Double.parseDouble(record.get(2)), Double.parseDouble(record.get(3))))
+                                .zoom(Integer.parseInt(record.get(4)))
+                                .order(Long.parseLong(record.get(5)))
+                                .city(cityRepository.findById(Long.parseLong(record.get(6))).get())
+                                .build());
+                    }
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -109,16 +118,21 @@ public class DataLoader {
     private List<City> loadCitiesFromCSV() {
         List<City> cities = new ArrayList<>();
 
-        try (CSVParser parser = new CSVParser(new FileReader(Objects.requireNonNull(getClass().getResource("/db-csv/city-data.csv")).getPath()), CSVFormat.DEFAULT)) {
-            for (CSVRecord record : parser) {
+        try (InputStream inputStream = getClass().getResourceAsStream("/db-csv/city-data.csv")) {
+            if (inputStream != null) {
+                try (CSVParser parser = new CSVParser(new InputStreamReader(inputStream), CSVFormat.DEFAULT)) {
 
-                cities.add(City.builder()
-                        .id(Long.parseLong(record.get(0)))
-                        .name(record.get(1))
-                        .geoLocation(new GeoLocation(Double.parseDouble(record.get(2)), Double.parseDouble(record.get(3))))
-                        .zoom(Integer.parseInt(record.get(4)))
-                        .order(Long.parseLong(record.get(5)))
-                        .build());
+                    for (CSVRecord record : parser) {
+
+                        cities.add(City.builder()
+                                .id(Long.parseLong(record.get(0)))
+                                .name(record.get(1))
+                                .geoLocation(new GeoLocation(Double.parseDouble(record.get(2)), Double.parseDouble(record.get(3))))
+                                .zoom(Integer.parseInt(record.get(4)))
+                                .order(Long.parseLong(record.get(5)))
+                                .build());
+                    }
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

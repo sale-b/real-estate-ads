@@ -9,6 +9,11 @@ logging:
     org.springframework.security.oauth2: DEBUG
 
 spring:
+  activemq:
+    broker-url: tcp://localhost:61616
+    acknowledge_mode: dups_ok
+  jms:
+    pub-sub-domain: true
   security:
     oauth2:
       client:

@@ -1,13 +1,11 @@
 const state = {
     userId: localStorage.userId || null,
-    apiUrl: 'http://client-server:8081',
-    websocketUrl: 'http://resource-server:8090'
+    apiUrl: 'http://client-server:8081'
 };
 
 const getters = {
     userId: (state) => state.userId,
-    apiUrl: (state) => state.apiUrl,
-    websocketUrl: (state) => state.websocketUrl
+    apiUrl: (state) => state.apiUrl
 };
 
 const actions = {

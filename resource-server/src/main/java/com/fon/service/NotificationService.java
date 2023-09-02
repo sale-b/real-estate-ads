@@ -7,12 +7,9 @@ import com.fon.dto.NotificationsRequestDto;
 import com.fon.entity.Notification;
 import com.fon.entity.User;
 import com.fon.mapper.NotificationMapper;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +17,9 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,9 +28,6 @@ public class NotificationService {
 
     @Autowired
     NotificationRepository notificationRepository;
-
-    @Autowired
-    SimpMessagingTemplate messagingTemplate;
 
     @Autowired
     UserService userService;

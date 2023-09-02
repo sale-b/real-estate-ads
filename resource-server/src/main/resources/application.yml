@@ -34,4 +34,5 @@ spring:
       mode: always
   activemq:
     broker-url: tcp://localhost:61616
+    acknowledge_mode: dups_ok
 baseUrl: http://resource-server:8090

@@ -79,6 +79,9 @@ public class Filter extends BaseEntity {
     private String userEmail;
 
     @Column(nullable = false)
+    private String userId;
+
+    @Column(nullable = false)
     private Boolean hasPictures;
 
     @Column(nullable = false)
@@ -87,6 +90,7 @@ public class Filter extends BaseEntity {
     @JsonProperty("user")
     private void getEmailFromUserObject(Map<String, String> user) {
         this.userEmail = user.get("email");
+        this.userId = user.get("id");
     }
 
 }

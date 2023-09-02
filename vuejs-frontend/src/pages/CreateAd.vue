@@ -17,7 +17,7 @@ export default {
   },
   props: {
     mode: String,
-    id: String
+    id: Number
   },
 };
 </script>

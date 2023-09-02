@@ -93,7 +93,7 @@ export default {
         });
 
         // Connect to WebSocket
-        const socket = new SockJS('http://client-server:8081/ws'); // Replace with your Spring Boot backend URL
+        const socket = new SockJS(`${this.apiUrl}/ws`); // Replace with your Spring Boot backend URL
         const stompClient = Stomp.over(socket);
 
         stompClient.connect({}, () => {

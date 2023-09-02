@@ -28,7 +28,7 @@ const routes = [
         },
         component: CreateAd,
         props: {
-          mode: 'create'
+          mode: "create"
         }
       },
       {
@@ -47,8 +47,8 @@ const routes = [
         },
         component: CreateAd,
         props: route => ({
-          mode: 'edit',
-          id: route.params.id
+          mode: "edit",
+          id: Number(route.params.id)
         })
       },
       {

@@ -147,7 +147,7 @@ export default {
   components: {MapContainerPinSelect},
   props: {
     mode: String,
-    id: String,
+    id: Number,
     dataBackgroundColor: {
       type: String,
       default: "",

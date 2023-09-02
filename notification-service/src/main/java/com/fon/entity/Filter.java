@@ -85,6 +85,9 @@ public class Filter extends BaseEntity {
     private Boolean hasPictures;
 
     @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false)
     private Boolean subscribed;
 
     @JsonProperty("user")

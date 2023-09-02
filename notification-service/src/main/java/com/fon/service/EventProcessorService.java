@@ -76,7 +76,7 @@ public class EventProcessorService {
 
     private void sendNotification(Filter filter, RealEstate realEstate) {
         if (filter.getSubscribed()) {
-            emailService.sendEmail(realEstate.toString(), filter.getUserEmail());
+            emailService.sendEmail(realEstate, filter);
         }
         Notification notification = Notification.builder()
                 .filter(filter)

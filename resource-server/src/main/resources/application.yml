@@ -19,7 +19,7 @@ spring:
           issuer-uri: http://auth-server:9000
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:p6spy:postgresql://localhost:5432/real_estate_backend
+    url: jdbc:p6spy:postgresql://db:5432/real_estate_backend
     username: postgres
     password: password
     driver-class-name: com.p6spy.engine.spy.P6SpyDriver

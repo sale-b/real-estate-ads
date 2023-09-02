@@ -8,7 +8,7 @@ logging:
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/notification_service
+    url: jdbc:postgresql://db:5432/notification_service
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver

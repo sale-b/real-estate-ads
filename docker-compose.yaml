@@ -1,0 +1,102 @@
+version: '3'
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./dbInit:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 1s
+      timeout: 1s
+      retries: 5
+    networks:
+      - realestate-network
+
+
+  active-mq:
+    image: rmohr/activemq
+    ports:
+      - 8161:8161
+      - 61616:61616
+    volumes:
+      - activemq-data:/var/lib/activemq/data
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8161" ]
+      interval: 2s
+      timeout: 1s
+      retries: 5
+    networks:
+      - realestate-network
+
+  auth-server:
+    build:
+      context: ./authorization-server
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - realestate-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://auth-server:9000/.well-known/openid-configuration" ]
+      interval: 2s
+      timeout: 1s
+      retries: 10
+    ports:
+      - 9000:9000
+      - 5001:5005
+
+  client-server:
+    build:
+      context: ./client-server
+    depends_on:
+      auth-server:
+        condition: service_healthy
+      active-mq:
+        condition: service_healthy
+    networks:
+      - realestate-network
+    ports:
+      - 8081:8081
+      - 5002:5005
+
+  resource-server:
+    build:
+      context: ./resource-server
+    depends_on:
+      auth-server:
+        condition: service_healthy
+      active-mq:
+        condition: service_healthy
+    networks:
+      - realestate-network
+    ports:
+      - 8090:8090
+      - 5003:5005
+
+  notification-service:
+    build:
+      context: ./authorization-server
+    depends_on:
+      db:
+        condition: service_healthy
+      active-mq:
+        condition: service_healthy
+    networks:
+      - realestate-network
+    ports:
+      - 8095:8095
+      - 5004:5005
+
+volumes:
+  postgres-data:
+  activemq-data:
+
+networks:
+  realestate-network:

@@ -67,6 +67,8 @@ public class JmsConfig {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         configurer.configure(factory, connectionFactory);
         factory.setPubSubDomain(false);
+        // Set concurrency to 1 to make sure that events are processed one by one
+        factory.setConcurrency("1");
         return factory;
     }
 

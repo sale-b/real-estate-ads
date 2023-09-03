@@ -49,7 +49,7 @@ and predictable way for client applications to request and manipulate resources 
 WebSocket communication is utilized for real-time, bidirectional interactions. It enables instant updates and
 notifications, making the application responsive and engaging for users.
 
-##Getting Started
+## Getting Started
 To run the project locally or in your development environment, follow these steps:
 
 ####1. Clone the Repository: 

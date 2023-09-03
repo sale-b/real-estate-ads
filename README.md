@@ -52,19 +52,19 @@ notifications, making the application responsive and engaging for users.
 ## Getting Started
 To run the project locally or in your development environment, follow these steps:
 
-####1. Clone the Repository: 
+#### 1. Clone the Repository: 
 Start by cloning this repository to your local machine using Git.
 
 ```git clone https://github.com/sale-b/real-estate-ads.git```
 
-####2. Required Dependencies: 
+#### 2. Required Dependencies: 
 Ensure you have the following dependencies installed on your system:
 
 - Docker: Install Docker to manage containerized applications.
 
 - Maven: Install Maven to build the project modules.
 
-####3. Build Maven Modules: 
+#### 3. Build Maven Modules: 
 Navigate to the project's root directory and build all four Maven modules: auth server, client server, resource server, and notification service using the following commands:
 
 ```bash
@@ -72,7 +72,7 @@ cd authorization-server
 mvn clean install
 ```
 
-####4. Modify /etc/hosts File (Windows/Linux/macOS):
+#### 4. Modify /etc/hosts File (Windows/Linux/macOS):
 
 To ensure seamless communication between components both inside and outside Docker containers, add the following entries to your /etc/hosts file:
 
@@ -87,7 +87,7 @@ To ensure seamless communication between components both inside and outside Dock
 
 These entries ensure that your application works correctly, whether running with or without Docker.
 
-####5. Run Docker Compose: 
+#### 5. Run Docker Compose: 
 Start the application by running Docker Compose. Navigate to the project's root directory and execute the following command:
 
 ```bash
@@ -95,5 +95,5 @@ docker-compose up
 ```
 This command launches the application components, including the authorization server, client server, resource server, and notification service, along with required dependencies such as the database and ActiveMQ.
 
-####6. Explore the Application: 
+#### 6. Explore the Application: 
 Access the application by opening your web browser and visiting client-server:8081. This URL will take you to the client server, where you can begin exploring and interacting with the Real Estate Ads application.

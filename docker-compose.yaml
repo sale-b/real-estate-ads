@@ -83,7 +83,7 @@ services:
 
   notification-service:
     build:
-      context: ./authorization-server
+      context: ./notification-service
     depends_on:
       db:
         condition: service_healthy

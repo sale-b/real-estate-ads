@@ -19,7 +19,6 @@ services:
     networks:
       - realestate-network
 
-
   active-mq:
     image: rmohr/activemq
     ports:
@@ -79,6 +78,8 @@ services:
     ports:
       - 8090:8090
       - 5003:5005
+    volumes:
+      - ./images:/images
 
   notification-service:
     build:

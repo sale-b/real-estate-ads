@@ -65,7 +65,7 @@ Ensure you have the following dependencies installed on your system:
 - Maven: Install Maven to build the project modules.
 
 #### 3. Build Maven Modules: 
-Navigate to the project's root directory and build all four Maven modules: auth server, client server, resource server, and notification service using the following commands:
+Navigate to the project's root directory and build all four Maven modules: **auth server, client server, resource server, and notification service** using the following commands:
 
 ```bash
 cd authorization-server

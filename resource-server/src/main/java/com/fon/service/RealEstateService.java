@@ -37,6 +37,9 @@ public class RealEstateService {
 
     @Autowired
     private RealEstateRepository realEstateRepository;
+
+    @Autowired
+    private NotificationService notificationService;
     @Autowired
     private CitySubregionService citySubregionService;
     @Autowired
@@ -52,7 +55,7 @@ public class RealEstateService {
     private String baseUrl;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final static String DIRECTORY_PATH = "/images";
+    private final static String DIRECTORY_PATH = System.getProperty("user.dir") + "/images";
 
 
     public RealEstateDetailsDto findById(Long id) {
@@ -207,6 +210,8 @@ public class RealEstateService {
     public void deleteById(Long id, String userEmail) {
         Optional<RealEstate> realEstate = realEstateRepository.findById(id);
         if (realEstate.isPresent() && realEstate.get().getUser().getEmail().equals(userEmail)) {
+            List<Notification> relatedNotifications = notificationService.findAllByRealEstateId(id);
+            notificationService.deleteAll(relatedNotifications);
             realEstateRepository.delete(realEstate.get());
             deleteImages(realEstate.get().getImages());
             eventService.sendDeleteEvent(RealEstate.builder().id(id).build());

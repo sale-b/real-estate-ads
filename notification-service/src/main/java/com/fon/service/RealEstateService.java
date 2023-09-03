@@ -25,6 +25,9 @@ public class RealEstateService {
     @Autowired
     private RealEstateRepository realEstateRepository;
 
+    @Autowired
+    NotificationService notificationService;
+
     public List<RealEstate> getRealEstates(Filter filter) {
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -122,6 +125,8 @@ public class RealEstateService {
     }
 
     public void delete(RealEstate realEstate) {
+        List<Notification> notifications = notificationService.findAllByRealEstateId(realEstate.getId());
+        notificationService.deleteAll(notifications);
         realEstateRepository.delete(realEstate);
     }
 }

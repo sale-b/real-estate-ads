@@ -35,5 +35,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Query("UPDATE Notification n SET n.seen = true, n.modifiedOn = :modifiedOn WHERE n.filter.id = :filterId")
     void markAllNotificationsAsSeenForFilter(@Param("filterId") Long filterId, @Param("modifiedOn") LocalDateTime modifiedOn);
 
+    List<Notification> findAllByRealEstateId(Long realEstateId);
 
 }

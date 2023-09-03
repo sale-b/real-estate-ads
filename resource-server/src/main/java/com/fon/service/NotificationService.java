@@ -96,4 +96,12 @@ public class NotificationService {
             throw new RuntimeException("Not authorized!");
         }
     }
+
+    public List<Notification> findAllByRealEstateId(Long realEstateId) {
+        return notificationRepository.findAllByRealEstateId(realEstateId);
+    }
+
+    public void deleteAll(List<Notification> notifications) {
+        notificationRepository.deleteAll(notifications);
+    }
 }

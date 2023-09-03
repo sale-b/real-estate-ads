@@ -1,5 +1,6 @@
 package com.fon.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,10 +12,15 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.servlet.ServletContext;
+
 @Configuration
 @EnableWebMvc
 @EnableWebSecurity
 public class WebConfig implements WebMvcConfigurer {
+
+    @Autowired
+    private ServletContext servletContext;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -33,7 +39,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/images/**")
-                .addResourceLocations("file:///images/");
+                .addResourceLocations("file:/" +System.getProperty("user.dir") + "/images/");
     }
 
     @Bean

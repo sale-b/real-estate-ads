@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class NotificationService {
 
@@ -21,5 +23,14 @@ public class NotificationService {
 
     public Notification save(Notification notification){
         return notificationRepository.save(notification);
+    }
+
+
+    public List<Notification> findAllByRealEstateId(Long realEstateId) {
+        return notificationRepository.findAllByRealEstateId(realEstateId);
+    }
+
+    public void deleteAll(List<Notification> notifications) {
+        notificationRepository.deleteAll(notifications);
     }
 }

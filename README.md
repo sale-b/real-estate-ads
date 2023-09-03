@@ -8,6 +8,10 @@ real-time notifications triggered by various events related to creating advertis
 
 ### Project Components
 
+The following figure shows the system architecture.
+
+![img1](https://i.ibb.co/GH1ytyz/Screenshot-2023-09-03-191153.jpg)
+
 #### 1. Spring Authorization Server
 
 Purpose: The Spring Authorization Server serves as the cornerstone of this project's security infrastructure. It handles

@@ -100,4 +100,4 @@ docker-compose up
 This command launches the application components, including the authorization server, client server, resource server, and notification service, along with required dependencies such as the database and ActiveMQ.
 
 #### 6. Explore the Application: 
-Access the application by opening your web browser and visiting client-server:8081. This URL will take you to the client server, where you can begin exploring and interacting with the Real Estate Ads application.
+Access the application by opening your web browser and visiting `http://client-server:8081`. This URL will take you to the client server, where you can begin exploring and interacting with the Real Estate Ads application.

@@ -52,7 +52,7 @@ public class RealEstateService {
     private String baseUrl;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final static String DIRECTORY_PATH = "C:\\images";
+    private final static String DIRECTORY_PATH = "/images";
 
 
     public RealEstateDetailsDto findById(Long id) {

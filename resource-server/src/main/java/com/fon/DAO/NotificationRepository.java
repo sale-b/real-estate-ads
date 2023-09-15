@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-@Transactional
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
     Page<Notification> findAll(Specification<Notification> spec, Pageable pageable);

@@ -67,7 +67,7 @@ public class Filter extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "filter", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "filter", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Notification> notifications= new ArrayList<>();
 
     private Boolean hasPictures;

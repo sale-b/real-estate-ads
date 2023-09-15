@@ -4,6 +4,7 @@ import com.fon.DAO.FilterRepository;
 import com.fon.dto.FilterDto;
 import com.fon.entity.Filter;
 import com.fon.entity.User;
+import com.fon.entity.enumeration.EventAction;
 import com.fon.mapper.FilterMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,22 +19,19 @@ public class FilterService {
 
     @Autowired
     FilterRepository filterRepository;
-    @Autowired
-    NotificationService notificationService;
+
     @Autowired
     FilterMapper filterMapper;
     @Autowired
     UserService userService;
-
     @Autowired
-    EventService eventService;
+    NotificationService notificationService;
 
-    public FilterDto save(Filter filter, String userEmail) {
+
+
+    public Filter save(Filter filter, String userEmail) {
         authorize(filter.getUser().getId(), userEmail);
-        filter = filterRepository.save(filter);
-        filter.getUser().setEmail(userEmail);
-        eventService.sendRealEstateEvent(filter);
-        return filterMapper.toFilterDto(filter, notificationService);
+        return filterRepository.save(filter);
     }
 
     public List<FilterDto> findByUserIdOrderByIdAsc(Long userId, String userEmail) {
@@ -42,9 +40,9 @@ public class FilterService {
     }
 
     public void deleteById(Long id, String userEmail) {
-        authorize(filterRepository.findById(id).get().getUser().getId(), userEmail);
+        Filter filter = filterRepository.findById(id).get();
+        authorize(filter.getUser().getId(), userEmail);
         filterRepository.deleteById(id);
-        eventService.sendDeleteEvent(Filter.builder().id(id).build());
     }
 
     private void authorize(Long userId, String userEmail) {

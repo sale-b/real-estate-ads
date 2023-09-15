@@ -15,9 +15,9 @@
             </md-field>
           </div>
           <div class="md-layout-item md-small-size-100 md-size-20">
-            <md-autocomplete v-model="selectedAdType" :md-options="autocompleteFields.adTypes">
+            <md-autocomplete v-model="selectedAdType" :md-options="autocompleteFields.adTypes" required>
               <label>Tip oglasa</label>
-            </md-autocomplete>
+            </md-autocomplete >
           </div>
           <div class="md-layout-item md-small-size-100 md-size-30">
             <md-field>
@@ -28,7 +28,7 @@
           </div>
 
           <div class="md-layout-item md-small-size-100 md-size-33">
-            <md-autocomplete v-model="selectedCity" :md-options="cities" @md-changed="getCityRegions">
+            <md-autocomplete v-model="selectedCity" :md-options="cities" @md-changed="getCityRegions" required>
               <label>Mesto</label>
               <template slot="md-autocomplete-item" slot-scope="{ item, term }">
                 <md-highlight-text :md-term="term">{{ item }}</md-highlight-text>
@@ -36,7 +36,7 @@
             </md-autocomplete>
           </div>
           <div class="md-layout-item md-small-size-100 md-size-33">
-            <md-autocomplete v-model="selectedCityRegion" :md-options="cityRegions" @md-changed="getCitySubregions">
+            <md-autocomplete v-model="selectedCityRegion" :md-options="cityRegions" @md-changed="getCitySubregions" required>
               <label>Deo mesta</label>
               <template slot="md-autocomplete-item" slot-scope="{ item, term }">
                 <md-highlight-text :md-term="term">{{ item }}</md-highlight-text>
@@ -44,7 +44,7 @@
             </md-autocomplete>
           </div>
           <div class="md-layout-item md-small-size-100 md-size-33">
-            <md-autocomplete v-model="selectedCitySubregion" :md-options="citySubregions">
+            <md-autocomplete v-model="selectedCitySubregion" :md-options="citySubregions" required>
               <label>Lokacija</label>
               <template slot="md-autocomplete-item" slot-scope="{ item, term }">
                 <md-highlight-text :md-term="term">{{ item }}</md-highlight-text>
@@ -63,7 +63,7 @@
                                       @pointSelected="handlePointSelected"></map-container-pin-select>
           </div>
           <div class="md-layout-item md-small-size-100 md-size-33">
-            <md-autocomplete v-model="selectedRealEstateType" :md-options="autocompleteFields.realEstateTypes">
+            <md-autocomplete v-model="selectedRealEstateType" :md-options="autocompleteFields.realEstateTypes" required>
               <label>Tip nekretnine</label>
             </md-autocomplete>
           </div>
@@ -75,23 +75,23 @@
             </md-field>
           </div>
           <div class="md-layout-item md-small-size-100 md-size-33">
-            <md-autocomplete v-model="selectedRoomsNumber" :md-options="autocompleteFields.roomsNumbers">
+            <md-autocomplete v-model="selectedRoomsNumber" :md-options="autocompleteFields.roomsNumbers" required>
               <label>Broj soba</label>
             </md-autocomplete>
           </div>
 
           <div class="md-layout-item md-small-size-100 md-size-33">
-            <md-autocomplete v-model="selectedFloor" :md-options="autocompleteFields.floors">
+            <md-autocomplete v-model="selectedFloor" :md-options="autocompleteFields.floors" required>
               <label>Sprat</label>
             </md-autocomplete>
           </div>
           <div class="md-layout-item md-small-size-100 md-size-33">
-            <md-autocomplete v-model="selectedFurnishType" :md-options="autocompleteFields.furnitureTypes">
+            <md-autocomplete v-model="selectedFurnishType" :md-options="autocompleteFields.furnitureTypes" required>
               <label>Nameštenost</label>
             </md-autocomplete>
           </div>
           <div class="md-layout-item md-small-size-100 md-size-33">
-            <md-autocomplete v-model="selectedHeatingType" :md-options="autocompleteFields.heatingTypes">
+            <md-autocomplete v-model="selectedHeatingType" :md-options="autocompleteFields.heatingTypes" required>
               <label>Grejanje</label>
             </md-autocomplete>
           </div>

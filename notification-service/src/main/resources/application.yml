@@ -8,10 +8,10 @@ logging:
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://db:5432/notification_service
+    url: jdbc:p6spy:postgresql://db:5432/notification_service
     username: postgres
     password: password
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
     hibernate:

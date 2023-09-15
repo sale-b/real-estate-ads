@@ -6,6 +6,7 @@ import com.fon.entity.enumeration.*;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -89,6 +90,9 @@ public class Filter extends BaseEntity {
 
     @Column(nullable = false)
     private Boolean subscribed;
+
+    @OneToMany(mappedBy = "filter", orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Notification> notifications= new ArrayList<>();
 
     @JsonProperty("user")
     private void getEmailFromUserObject(Map<String, String> user) {

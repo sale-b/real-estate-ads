@@ -1,23 +1,28 @@
 package com.fon.service;
 
 import com.fon.config.DestinationProperties;
-import com.fon.entity.BaseEntity;
 import com.fon.entity.Filter;
 import com.fon.entity.Notification;
 import com.fon.entity.RealEstate;
+import com.fon.message.BaseEvent;
+import com.fon.message.FilterEvent;
+import com.fon.message.RealEstateEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @EnableConfigurationProperties(DestinationProperties.class)
 @Slf4j
+@Transactional
 public class EventProcessorService {
 
     @Autowired
@@ -26,66 +31,87 @@ public class EventProcessorService {
     FilterService filterService;
     @Autowired
     EmailService emailService;
-
+    @Autowired
+    JmsTemplate jmsTemplate;
     @Autowired
     NotificationService notificationService;
 
     @JmsListener(destination = "${destination.events}", containerFactory = "queueConnectionFactory")
-    public void receiveSaveEvent(BaseEntity event) {
-        if (event instanceof Filter) {
-            Filter filter = (Filter) event;
-            log.info("Got for save {}", filter);
-            filter = filterService.save(filter);
-            sendNotification(filter);
-        } else if (event instanceof RealEstate) {
-            RealEstate realEstate = (RealEstate) event;
-            log.info("Got for save {}", realEstate);
-            realEstate.setCreatedOn(LocalDateTime.now());
-            realEstate = realEstateService.save(realEstate);
-            sendNotification(realEstate);
+    public void receiveRealEstateEvent(BaseEvent event) {
+        log.info("Got event {}", event);
+        if (event instanceof FilterEvent) {
+            FilterEvent filterEvent = (FilterEvent) event;
+            switch (event.getEventAction()) {
+                case UPDATE:
+                    filterEvent.getFilter().setModifiedOn(LocalDateTime.now());
+                    Filter filter = filterService.save(filterEvent.getFilter());
+                    List<Notification> notifications = generateNotifications(filter);
+                    sendNotifications(notifications);
+                    break;
+                case DELETE:
+                    log.info("Got to delete {}", event);
+                    filterService.delete(((FilterEvent) event).getFilter());
+                    break;
+            }
+
+        } else if (event instanceof RealEstateEvent) {
+            RealEstateEvent realEstateEvent = (RealEstateEvent) event;
+            switch (event.getEventAction()) {
+                case UPDATE:
+                    realEstateEvent.getRealEstate().setModifiedOn(LocalDateTime.now());
+                    RealEstate realEstate = realEstateService.save(realEstateEvent.getRealEstate());
+                    List<Notification> notifications = generateNotifications(realEstate);
+                    sendNotifications(notifications);
+                    break;
+                case DELETE:
+                    log.info("Got to delete {}", event);
+                    realEstateService.delete(((RealEstateEvent) event).getRealEstate());
+                    break;
+            }
         }
     }
 
-    @JmsListener(destination = "${destination.removals}", containerFactory = "queueConnectionFactory")
-    @Transactional
-    public void receiveDeleteEvent(BaseEntity event) throws Exception {
-        if (event instanceof Filter) {
-            log.info("Got to delete {}", event);
-            filterService.delete((Filter) event);
-        } else if (event instanceof RealEstate) {
-            log.info("Got to delete {}", event);
-            realEstateService.delete((RealEstate) event);
-        }
-    }
-
-    private void sendNotification(Filter filter) {
-        log.info("FOUND FILTER {}", filter);
+    private List<Notification> generateNotifications(Filter filter) {
         List<RealEstate> realEstateList = realEstateService.getRealEstates(filter);
+        List<Notification> notifications = new ArrayList<>();
         for (RealEstate realEstate : realEstateList) {
-            sendNotification(filter, realEstate);
+            log.info("FOUND REALESTATE {}", realEstate);
+            notifications.add(generateNotification(filter, realEstate));
         }
+        return notifications;
     }
 
-    private void sendNotification(RealEstate realEstate) {
-        log.info("FOUND REALESTATE {}", realEstate);
+    private List<Notification> generateNotifications(RealEstate realEstate) {
         List<Filter> filters = filterService.getFilters(realEstate);
+        List<Notification> notifications = new ArrayList<>();
         for (Filter filter : filters) {
-            sendNotification(filter, realEstate);
+            log.info("FOUND FILTER {}", filter);
+            notifications.add(generateNotification(filter, realEstate));
         }
+        return notifications;
     }
 
-    private void sendNotification(Filter filter, RealEstate realEstate) {
-        if (filter.getSubscribed()) {
-            emailService.sendEmail(realEstate, filter);
-        }
+    private Notification generateNotification(Filter filter, RealEstate realEstate) {
+        LocalDateTime createdOn = LocalDateTime.now();
         Notification notification = Notification.builder()
                 .filter(filter)
                 .filterId(filter.getId())
                 .realEstate(realEstate)
                 .seen(false)
-                .createdOn(LocalDateTime.now())
+                .sent(false)
+                .createdOn(createdOn)
+                .modifiedOn(createdOn)
                 .build();
-        notification = notificationService.save(notification);
-        notificationService.sendNotification(notification);
+        return notificationService.save(notification);
+    }
+
+
+    private void sendNotifications(List<Notification> notifications) {
+        notifications.parallelStream().forEach(notification -> {
+            if (notification.getFilter().getSubscribed()) {
+                emailService.sendEmail(notification);
+            }
+            notificationService.sendNotification(notification);
+        });
     }
 }

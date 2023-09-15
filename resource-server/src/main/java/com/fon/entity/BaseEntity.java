@@ -1,5 +1,6 @@
 package com.fon.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fon.util.BaseEntityListener;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -23,12 +24,13 @@ public abstract class BaseEntity {
 
     @Column(name = "modified_on", nullable = false)
     @NotNull
+    @JsonIgnore
     protected LocalDateTime modifiedOn;
 
     @PrePersist
     public void prePersist() {
         this.createdOn = LocalDateTime.now();
-        this.modifiedOn = LocalDateTime.now();
+        this.modifiedOn = this.createdOn;
     }
 
     @PreUpdate

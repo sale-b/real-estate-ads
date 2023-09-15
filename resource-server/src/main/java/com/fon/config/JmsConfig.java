@@ -1,8 +1,6 @@
 package com.fon.config;
 
-import com.fon.entity.Filter;
-import com.fon.entity.Notification;
-import com.fon.entity.RealEstate;
+import com.fon.entity.*;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ActiveMQTopic;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
@@ -18,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.jms.support.destination.DynamicDestinationResolver;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -26,6 +25,7 @@ import javax.jms.Session;
 import java.util.Map;
 
 @Configuration
+@EnableScheduling
 public class JmsConfig {
 
     @Bean
@@ -44,8 +44,8 @@ public class JmsConfig {
         converter.setTargetType(MessageType.TEXT);
         converter.setTypeIdPropertyName("_type");
         converter.setTypeIdMappings(Map.ofEntries(
-                Map.entry("com.fon.entity.Filter", Filter.class),
-                Map.entry("com.fon.entity.RealEstate", RealEstate.class),
+                Map.entry("com.fon.entity.FilterEvent", FilterEvent.class),
+                Map.entry("com.fon.entity.RealEstateEvent", RealEstateEvent.class),
                 Map.entry("com.fon.entity.Notification", Notification.class)
         ));
         return converter;

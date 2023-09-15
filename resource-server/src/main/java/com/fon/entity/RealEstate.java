@@ -1,5 +1,6 @@
 package com.fon.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fon.entity.enumeration.*;
 import lombok.*;
 
@@ -86,7 +87,12 @@ public class RealEstate extends BaseEntity {
     @Column(nullable = false)
     private Boolean hasPictures;
 
-    @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @OneToMany(mappedBy = "realEstate", cascade =  CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<Notification> notifications;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "realEstate", cascade =  CascadeType.ALL, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
 
     public void addImage(Image image) {
@@ -98,5 +104,6 @@ public class RealEstate extends BaseEntity {
         images.remove(image);
         image.setRealEstate(null);
     }
+
 
 }

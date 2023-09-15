@@ -18,16 +18,12 @@ public class DefaultSecurityConfig {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests(authorizeRequests ->
                 authorizeRequests
-                        .antMatchers("/register", "/register/**")
+                        .antMatchers("/register", "/register/**", "/registrationConfirm", "/registrationConfirm/**", "/login")
                         .permitAll()
                         .anyRequest().authenticated()
         )
-                .formLogin(withDefaults())
-                .logout()
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("http://client-server:8081/")
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID");
+                .formLogin()
+                .loginPage("/login");
         return http.build();
     }
 

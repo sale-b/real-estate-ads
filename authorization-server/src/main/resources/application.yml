@@ -16,7 +16,16 @@ spring:
       platform: postgres
 logging:
   level:
-    root: INFO
-    org.springframework.web: INFO
-    org.springframework.security: INFO
-    org.springframework.security.oauth2: INFO
+    root: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+email:
+  properties:
+    SMTP_PORT: '465'
+    EMAIL_SUBJECT: STAMBENI OGLASNIK
+    SMTP_SERVER: mail.brigital.rs
+    EMAIL_TO_CC: ''
+    PASSWORD: password
+    USERNAME: realestate@brigital.rs
+    EMAIL_FROM: realestate@brigital.rs

@@ -18,7 +18,7 @@ public class Notification extends BaseEntity {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "real_estate_id", nullable = false)
     private RealEstate realEstate;
 
@@ -42,6 +42,6 @@ public class Notification extends BaseEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id);
+        return Objects.hash(id);
     }
 }

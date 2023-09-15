@@ -1,5 +1,6 @@
 package com.fon.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -36,6 +37,11 @@ public class Notification extends BaseEntity {
     private Long filterId;
 
     private Boolean seen;
+
+    @Column(columnDefinition = "boolean default false", nullable = false)
+    @JsonIgnore
+    private Boolean sent;
+
 
     @Override
     public boolean equals(Object o) {

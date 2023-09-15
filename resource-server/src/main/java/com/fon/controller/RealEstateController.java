@@ -5,7 +5,10 @@ import com.fon.dto.AutocompleteValuesDto;
 import com.fon.dto.PageRequestDto;
 import com.fon.dto.RealEstateDetailsDto;
 import com.fon.entity.RealEstate;
+import com.fon.entity.RealEstateEvent;
+import com.fon.entity.enumeration.EventAction;
 import com.fon.service.CitySubregionService;
+import com.fon.service.EventService;
 import com.fon.service.RealEstateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/real-estate")
@@ -32,6 +36,9 @@ public class RealEstateController {
     @Autowired
     CitySubregionService citySubregionService;
 
+    @Autowired
+    EventService eventService;
+
     @GetMapping("/autocomplete-fields")
     public ResponseEntity<AutocompleteValuesDto> getAutocompleteValues() {
         return ResponseEntity.status(HttpStatus.OK).body(realEstateService.getAutocompleteValues());
@@ -41,7 +48,14 @@ public class RealEstateController {
     public ResponseEntity<RealEstate> saveRealEstate(@ModelAttribute("model") String request,
                                                      @RequestParam(value = "images", required = false) List<MultipartFile> fileList, Principal principal) throws IOException {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(realEstateService.save(request, fileList, principal.getName()));
+        RealEstate realEstate = realEstateService.save(request, fileList, principal.getName());
+        try {
+            eventService.sendEvent(eventService.createEvent(realEstate, EventAction.UPDATE));
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(realEstate);
     }
 
     @PostMapping("/page")
@@ -60,6 +74,11 @@ public class RealEstateController {
     @DeleteMapping("/{id}")
     public ResponseEntity deleteById(@PathVariable Long id, Principal principal) {
         realEstateService.deleteById(id, principal.getName());
+        try {
+        eventService.sendEvent(eventService.createEvent(RealEstate.builder().id(id).build(), EventAction.DELETE));
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-@Transactional
 public interface RealEstateRepository extends JpaRepository<RealEstate, Long> {
 
     Page<RealEstate> findAll(Specification<RealEstate> spec, Pageable pageable);

@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-@Transactional
 public interface CityRegionRepository extends JpaRepository<CityRegion, Long> {
     List<CityRegion> findByCityId(Long cityId);
     List<CityRegion> findByCityIdIn(List<Long> cityIds);

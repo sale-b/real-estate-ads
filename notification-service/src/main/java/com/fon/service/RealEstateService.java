@@ -44,7 +44,7 @@ public class RealEstateService {
             if (filter.getHasPictures() != null && filter.getHasPictures()) {
                 predicates.add(criteriaBuilder.equal(root.get("hasPictures"), true));
             }
-            if (filter.getLocation() != null && filter.getLocation() != null) {
+            if (filter.getLocation() != null && filter.getMicroLocation() != null) {
                 if ((filter.getLocation() == null || filter.getMicroLocation().isEmpty())) {
 
                     Join<CityRegion, City> cityJoin = root.join("location").join("cityRegion").join("city");

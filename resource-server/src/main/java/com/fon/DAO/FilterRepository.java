@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-@Transactional
 public interface FilterRepository extends JpaRepository<Filter, Long> {
     List<Filter> findByUserIdOrderByIdAsc(Long userId);
 }

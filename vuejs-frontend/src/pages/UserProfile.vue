@@ -34,7 +34,7 @@
                     :location="notification.realEstate.location"
                     :space="notification.realEstate.livingSpaceArea"
                     :rooms="notification.realEstate.roomsNumber"
-                    :furniture="notification.realEstate.furniture"
+                    :furniture="notification.realEstate.furnitureType"
                     :price="notification.realEstate.price"
                     :floor="notification.realEstate.floor"
                     :id="notification.realEstate.id"
@@ -185,7 +185,7 @@ export default {
           .post(`${this.apiUrl}/api/v1/${pathVariable}/page`, {
             filters,
             page: this.infoPagination ? this.infoPagination : 1,
-            size: 1
+            size: 10
           })
           .then((res) => {
             if (this.currentMode === this.mode.ads) {

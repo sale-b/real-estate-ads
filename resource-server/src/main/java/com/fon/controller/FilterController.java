@@ -2,8 +2,11 @@ package com.fon.controller;
 
 import com.fon.dto.FilterDto;
 import com.fon.entity.Filter;
+import com.fon.entity.enumeration.EventAction;
 import com.fon.mapper.FilterMapper;
+import com.fon.service.EventService;
 import com.fon.service.FilterService;
+import com.fon.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +23,26 @@ public class FilterController {
     @Autowired
     FilterService filterService;
 
+    @Autowired
+    NotificationService notificationService;
+
+    @Autowired
+    EventService eventService;
+
+    @Autowired
+    FilterMapper filterMapper;
+
     @PostMapping()
     public ResponseEntity<FilterDto> save(@RequestBody FilterDto filterDto, Principal principal) {
         Filter filter = FilterMapper.INSTANCE.toFilter(filterDto);
-        return ResponseEntity.status(HttpStatus.OK).body(filterService.save(filter, principal.getName()));
+        filter = filterService.save(filter, principal.getName());
+        try {
+            filter.getUser().setEmail(principal.getName());
+            eventService.sendEvent(eventService.createEvent(filter, EventAction.UPDATE));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(filterMapper.toFilterDto(filter, notificationService));
     }
 
     @GetMapping("/{userId}")
@@ -34,6 +53,11 @@ public class FilterController {
     @DeleteMapping("/{id}")
     public ResponseEntity deleteById(@PathVariable Long id, Principal principal) {
         filterService.deleteById(id, principal.getName());
+        try {
+            eventService.sendEvent(eventService.createEvent(Filter.builder().id(id).build(), EventAction.DELETE));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 

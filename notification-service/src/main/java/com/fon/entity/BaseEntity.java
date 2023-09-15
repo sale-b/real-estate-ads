@@ -21,4 +21,8 @@ public abstract class BaseEntity {
     @NotNull
     protected LocalDateTime createdOn;
 
+    @Column(name = "modified_on", nullable = false)
+    @NotNull
+    protected LocalDateTime modifiedOn;
+
 }

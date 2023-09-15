@@ -152,7 +152,7 @@ export default {
               roomsNumberHigher: this.$route.query.roomsNumberHigher
             },
             page: page,
-            size: 1
+            size: 10
           }, {
             withCredentials: true
           })

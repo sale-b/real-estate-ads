@@ -36,9 +36,15 @@ public class FilterController {
     public ResponseEntity<FilterDto> save(@RequestBody FilterDto filterDto, Principal principal) {
         Filter filter = FilterMapper.INSTANCE.toFilter(filterDto);
         filter = filterService.save(filter, principal.getName());
+        filter.getUser().setEmail(principal.getName());
         try {
-            filter.getUser().setEmail(principal.getName());
-            eventService.sendEvent(eventService.createEvent(filter, EventAction.UPDATE));
+            Filter finalFilter = filter;
+            Runnable runnable = () -> {
+                eventService.sendEvent(eventService.createEvent(finalFilter, EventAction.UPDATE));
+            };
+            Thread t = new Thread(runnable);
+            t.setDaemon(true);
+            t.start();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -54,7 +60,12 @@ public class FilterController {
     public ResponseEntity deleteById(@PathVariable Long id, Principal principal) {
         filterService.deleteById(id, principal.getName());
         try {
-            eventService.sendEvent(eventService.createEvent(Filter.builder().id(id).build(), EventAction.DELETE));
+            Runnable runnable = () -> {
+                eventService.sendEvent(eventService.createEvent(Filter.builder().id(id).build(), EventAction.DELETE));
+            };
+            Thread t = new Thread(runnable);
+            t.setDaemon(true);
+            t.start();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

@@ -2,7 +2,9 @@ package com.fon.service;
 
 
 import com.fon.DAO.FilterEventRepository;
+import com.fon.DAO.FilterRepository;
 import com.fon.DAO.RealEstateEventRepository;
+import com.fon.DAO.RealEstateRepository;
 import com.fon.entity.*;
 import com.fon.entity.enumeration.EventAction;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +13,6 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -30,6 +31,10 @@ public class EventService {
     private RealEstateEventRepository realEstateEventRepository;
     @Autowired
     private FilterEventRepository filterEventRepository;
+    @Autowired
+    private RealEstateRepository realEstateRepository;
+    @Autowired
+    private FilterRepository filterRepository;
 
     public void sendEvent(BaseEvent event) {
         jmsTemplate.convertAndSend("real-estate-events.que", event);
@@ -49,7 +54,38 @@ public class EventService {
         failedEvents.addAll(realEstateEventRepository.findBySentFalseAndCreatedOnBeforeOrderByIdAsc(thresholdTime));
         failedEvents.addAll(filterEventRepository.findBySentFalseAndCreatedOnBeforeOrderByIdAsc(thresholdTime));
         failedEvents.stream().forEach(event -> {
-            sendEvent(event);
+            if (event instanceof RealEstateEvent) {
+                RealEstateEvent realEstateEvent = (RealEstateEvent) event;
+                realEstateRepository.findById(realEstateEvent.getRealEstateId()).ifPresentOrElse(re -> {
+                            realEstateEvent.setRealEstate(re);
+                            sendEvent(realEstateEvent);
+                        },
+                        () -> {
+                            if (event.getEventAction().equals(EventAction.DELETE)) {
+                                realEstateEvent.setRealEstate(RealEstate.builder().id(realEstateEvent.getRealEstateId()).build());
+                                sendEvent(realEstateEvent);
+                            } else {
+                                realEstateEventRepository.delete(realEstateEvent);
+                            }
+                        }
+                );
+
+            } else if (event instanceof FilterEvent) {
+                FilterEvent filterEvent = (FilterEvent) event;
+                filterRepository.findById(filterEvent.getFilterId()).ifPresentOrElse(f -> {
+                            filterEvent.setFilter(f);
+                            sendEvent(filterEvent);
+                        },
+                        () -> {
+                            if (event.getEventAction().equals(EventAction.DELETE)) {
+                                filterEvent.setFilter(Filter.builder().id(filterEvent.getFilterId()).build());
+                                sendEvent(filterEvent);
+                            } else {
+                                filterEventRepository.delete(filterEvent);
+                            }
+                        }
+                );
+            }
         });
     }
 

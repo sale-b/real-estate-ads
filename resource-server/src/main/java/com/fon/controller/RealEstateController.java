@@ -5,7 +5,6 @@ import com.fon.dto.AutocompleteValuesDto;
 import com.fon.dto.PageRequestDto;
 import com.fon.dto.RealEstateDetailsDto;
 import com.fon.entity.RealEstate;
-import com.fon.entity.RealEstateEvent;
 import com.fon.entity.enumeration.EventAction;
 import com.fon.service.CitySubregionService;
 import com.fon.service.EventService;
@@ -20,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/real-estate")
@@ -50,8 +48,13 @@ public class RealEstateController {
 
         RealEstate realEstate = realEstateService.save(request, fileList, principal.getName());
         try {
-            eventService.sendEvent(eventService.createEvent(realEstate, EventAction.UPDATE));
-        } catch (Exception e){
+            Runnable runnable = () -> {
+                eventService.sendEvent(eventService.createEvent(realEstate, EventAction.UPDATE));
+            };
+            Thread t = new Thread(runnable);
+            t.setDaemon(true);
+            t.start();
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
@@ -75,8 +78,13 @@ public class RealEstateController {
     public ResponseEntity deleteById(@PathVariable Long id, Principal principal) {
         realEstateService.deleteById(id, principal.getName());
         try {
-        eventService.sendEvent(eventService.createEvent(RealEstate.builder().id(id).build(), EventAction.DELETE));
-        } catch (Exception e){
+            Runnable runnable = () -> {
+                eventService.sendEvent(eventService.createEvent(RealEstate.builder().id(id).build(), EventAction.DELETE));
+            };
+            Thread t = new Thread(runnable);
+            t.setDaemon(true);
+            t.start();
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

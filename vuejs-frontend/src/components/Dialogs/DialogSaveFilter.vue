@@ -14,8 +14,8 @@
       </div>
 
       <md-dialog-actions>
-        <md-button class="md-info" @click="showHideDialog()">Close</md-button>
-        <md-button class="md-info" @click="saveFiltering">Save</md-button>
+        <md-button class="md-info" @click="showHideDialog()">Zatvori</md-button>
+        <md-button class="md-info" @click="saveFiltering">Sačuvaj</md-button>
       </md-dialog-actions>
     </md-dialog>
 

@@ -76,6 +76,7 @@ public class EmailService {
 
         htmlContent.append("<h2>STAMBENI OGLASNIK</h2>\n" +
                 "<p>Pronadjen je novi oglas za filter pod nazivom: <b>" + notification.getFilter().getTitle() + "</b></p>\n" +
+                "<a href=\"http://client-server:8081/ad/" + notification.getRealEstate().getId() + "\">VIDI OGLAS</a>\n" +
                 "<div style=\"width: 50%;\">");
         htmlContent.append("<table style=\"font-family: arial, sans-serif;border-collapse: collapse;width: 400px;\">");
         htmlContent.append(" <tr><td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;background-color: #4CAF50;color: white;\"><b>" + notification.getRealEstate().getTitle() + "</b></td></tr>");
